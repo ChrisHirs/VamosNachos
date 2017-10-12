@@ -1,4 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,11 +27,12 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                style="?android:attr/progressBarStyle"
+            <ImageView
+                android:id="@+id/imageInfo"
                 android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/buritops" />
 
             <TextView
                 android:id="@+id/textInfo"
@@ -44,6 +46,7 @@
 
             <Button
                 android:id="@+id/buttonAttack"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Attack!" />
@@ -65,27 +68,30 @@
 
             <Button
                 android:id="@+id/buttonTest"
-                style="@style/Widget.AppCompat.Button"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Test" />
+                android:text="Test"
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
             <Button
                 android:id="@+id/buttonNothing"
-                style="@style/Widget.AppCompat.Button"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Nothing" />
+                android:text="Nothing"
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
             <Button
                 android:id="@+id/buttonBag"
-                style="@style/Widget.AppCompat.Button"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Bag" />
+                android:text="Bag"
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
         </LinearLayout>
     </LinearLayout>
 

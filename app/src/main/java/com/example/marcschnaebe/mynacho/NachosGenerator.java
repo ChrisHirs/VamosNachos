@@ -16,9 +16,16 @@ import java.util.HashMap;
 
 public class NachosGenerator {
 
+    private static ArrayList<String> listNachosNames = new ArrayList<>();
 
     public NachosGenerator(GoogleMap mMap) {
 
+        listNachosNames.add("Caraponcho");
+        listNachosNames.add("Salamuchos");
+        listNachosNames.add("Buritops");
+        listNachosNames.add("Mustaupicos");
+        listNachosNames.add("Bulbiatchos");
+        listNachosNames.add("Maracachu");
     }
 
     /**
@@ -32,8 +39,9 @@ public class NachosGenerator {
         double latitude = Util.randomDouble(position.latitude - 0.001, position.latitude + 0.001);
         double longitude = Util.randomDouble(position.longitude - 0.001, position.longitude + 0.001);
         int pv = Util.randomInteger(5, 30);
+        String name = listNachosNames.get(Util.randomInteger(0, 5));
 
-        return new Nachos(latitude, longitude, pv);
+        return new Nachos(latitude, longitude, name, pv);
 
     }
 

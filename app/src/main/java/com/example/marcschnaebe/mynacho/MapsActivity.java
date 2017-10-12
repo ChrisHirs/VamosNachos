@@ -38,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements
     private Button buttonTest;
     private Button buttonAttack;
     private TextView textInfo;
+    private ImageView imageInfo;
     private LinearLayout layoutInfo;
 
     //Nachomons
@@ -190,6 +192,7 @@ public class MapsActivity extends FragmentActivity implements
         layoutInfo.setVisibility(LinearLayout.GONE);
 
         textInfo = (TextView) findViewById(R.id.textInfo);
+        imageInfo = (ImageView) findViewById(R.id.imageInfo);
 
         // -------------------
         //       NACHOS
@@ -256,19 +259,14 @@ public class MapsActivity extends FragmentActivity implements
                     double endLatitude = nachosPosition.latitude;
                     double endLongitude = nachosPosition.longitude;
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+
+                    layoutInfo.setVisibility(LinearLayout.VISIBLE);
+                    textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
+                    imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 40) {
-                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
-                        textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
                         buttonAttack.setEnabled(true);
                     }
-                    else if (results[0] < 100) {
-                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
-                        textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
-                        buttonAttack.setEnabled(false);
-                    }
-                    else {
-                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
-                        textInfo.setText("Nom : ??? PV : ???");
+                    else if (results[0] > 100) {
                         buttonAttack.setEnabled(false);
                     }
                 }
@@ -549,7 +547,9 @@ public class MapsActivity extends FragmentActivity implements
      * @return Marker du Nachomon donné
      */
     public Marker placeMarker(Nachos nachos) {
-        Marker mNachos = mMap.addMarker(new MarkerOptions().position(nachos.getPosition()));
+        Marker mNachos = mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName())))
+                .position(nachos.getPosition()));
         return mNachos;
     }
 
