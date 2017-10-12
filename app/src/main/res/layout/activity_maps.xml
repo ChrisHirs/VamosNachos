@@ -42,12 +42,12 @@
                 android:text="Nothing" />
 
             <Button
-                android:id="@+id/buttonActivity"
+                android:id="@+id/buttonBag"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Infos" />
+                android:text="Bag" />
         </LinearLayout>
 
     </LinearLayout>

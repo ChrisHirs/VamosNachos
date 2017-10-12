@@ -12,17 +12,17 @@ public class Nachos {
     private String name;
     private int pv;
 
-    public Nachos(double latitude, double longitude, int pv) {
+    public Nachos(double latitude, double longitude, int _pv) {
 
         position = new LatLng(latitude, longitude);
-        pv = pv;
+        pv = _pv;
         name = "Pikachos";
     }
 
-    public Nachos(LatLng position, int pv) {
+    public Nachos(LatLng _position, int _pv) {
 
-        position = position;
-        pv = pv;
+        position = _position;
+        pv = _pv;
         name = "Pikachos";
 
     }

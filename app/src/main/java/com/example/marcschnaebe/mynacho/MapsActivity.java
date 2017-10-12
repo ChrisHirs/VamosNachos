@@ -168,8 +168,6 @@ public class MapsActivity extends FragmentActivity implements
             mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
-
     }
 
     @Override
@@ -191,6 +189,16 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setLocationSource(this);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Nachos nachos = mapMarker.get(marker);
+                if (nachos != null) {
+                    Toast.makeText(getApplicationContext(), "Nom : " + nachos.getName() + " PV : " + Integer.toString(nachos.getPv()), Toast.LENGTH_LONG).show();
+                }
+                return false;
+            }
+        });
     }
 
     public boolean checkLocationPermission() {
@@ -476,8 +484,7 @@ public class MapsActivity extends FragmentActivity implements
     public Marker placeMarker(Nachos nachos) {
         Marker mNachos = mMap.addMarker(new MarkerOptions()
                 .position(nachos.getPosition())
-                .title("Nachos")
-        );
+                .title(nachos.getName()));
         return mNachos;
     }
 
