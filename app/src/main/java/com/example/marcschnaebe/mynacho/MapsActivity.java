@@ -58,53 +58,67 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         SensorEventListener{
 
+    //API
     private GoogleApiClient mGoogleApiClient;
+
+    //Carte et positionnement
     private GoogleMap mMap;
+    private LatLng latLng;
+    private float currentBearing = 0;
+    private long lastPlayerRotation = 0;
+
+    //Listener de localisation
     private OnLocationChangedListener mMapLocationListener = null;
+
+    //Marqueur du joueur
     private Marker myPositionMarker;
 
+    //SENSORS
     private SensorManager mSensorManager;
     private Sensor mMagneticSensor;
     private Sensor mAcceleroSensor;
     private Sensor mOrientationSensor;
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
-    private float currentBearing = 0;
-
-    private long lastPlayerRotation = 0;
-
-    private LatLng latLng;
-
-    private Button buttonTest;
-    private Button buttonAttack;
-    private TextView textInfo;
-    private LinearLayout layoutInfo;
-
-    private NachosGenerator nachosGenerator;
-    private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
-
-    // globals
+    //Calculs des sensors pour la boussole
     private float[] gravityData = new float[3];
     private float[] geomagneticData  = new float[3];
     private boolean hasGravityData = false;
     private boolean hasGeomagneticData = false;
     private double rotationInDegrees;
 
+    //Type de sensors utilisés pour la boussole (true = déprécié)
     private boolean depreciatedOrientation = false;
 
+    //Code des Permissions
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
-    // location accuracy settings
+    //Interface
+    private Button buttonTest;
+    private Button buttonAttack;
+    private TextView textInfo;
+    private LinearLayout layoutInfo;
+
+    //Nachomons
+    private NachosGenerator nachosGenerator;
+    private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
+
+    //Paramètres pour la localisation
     private static final LocationRequest REQUEST = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(2000)
             .setFastestInterval(1000)
             .setSmallestDisplacement(0);
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d("test", "OnCreate");
+
+        // -------------------
+        //      MAP / API
+        // -------------------
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -112,21 +126,53 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFragment.getMapAsync(this);
 
+        //Préparation de la connection à Google
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
 
+        // -------------------
+        //       SENSORS
+        // -------------------
+
+        //Sensor Manager
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
+        //Affectation des Sensors
         if(depreciatedOrientation){
+            //Dépréciée
             mOrientationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         }
         else{
+            //Magnétomètre et Accéleromètre
             mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
             mAcceleroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
+
+        // Liste des Sensors disponibles
+        List<Sensor> msensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+        // Affiche le nombre de Sensors disponibles
+        Log.d("sensor", Integer.toString(msensorList.size()));
+
+        // Création d'une liste des Sensors de l'appareil
+        String sSensList = new String("");
+        Sensor tmp;
+        int x,i;
+        for (i=0;i<msensorList.size();i++){
+            tmp = msensorList.get(i);
+            sSensList = " "+sSensList+tmp.getName() + "\n";
+        }
+        //Affichage de la liste s'il y a au moins un Sensor
+        if (i>0){
+            Log.d("sensor", sSensList);
+        }
+
+        // -------------------
+        //      INTERFACE
+        // -------------------
 
         buttonTest = (Button) findViewById(R.id.buttonTest);
         buttonTest.setOnClickListener(new View.OnClickListener() {
@@ -137,35 +183,20 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-        layoutInfo = (LinearLayout) findViewById(R.id.layoutInfo);
-        layoutInfo.setVisibility(LinearLayout.GONE);
-
         buttonAttack = (Button) findViewById(R.id.buttonAttack);
         buttonAttack.setEnabled(false);
 
+        layoutInfo = (LinearLayout) findViewById(R.id.layoutInfo);
+        layoutInfo.setVisibility(LinearLayout.GONE);
+
         textInfo = (TextView) findViewById(R.id.textInfo);
 
+        // -------------------
+        //       NACHOS
+        // -------------------
+
+        //Création d'une générateur de Nachos
         nachosGenerator = new NachosGenerator(mMap);
-
-
-        // List of Sensors Available
-        List<Sensor> msensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
-
-        // Print how may Sensors are there
-        Log.d("sensor", Integer.toString(msensorList.size()));
-
-        // Print each Sensor available using sSensList as the String to be printed
-        String sSensList = new String("");
-        Sensor tmp;
-        int x,i;
-        for (i=0;i<msensorList.size();i++){
-            tmp = msensorList.get(i);
-            sSensList = " "+sSensList+tmp.getName() + "\n"; // Add the sensor name to the string of sensors available
-        }
-        // if there are sensors available show the list
-        if (i>0){
-            Log.d("sensor", sSensList);
-        }
 
     }
 
@@ -173,12 +204,17 @@ public class MapsActivity extends FragmentActivity implements
     protected void onResume() {
         Log.d("test", "OnResume");
         super.onResume();
+
+        //Connexion à l'API
         mGoogleApiClient.connect();
 
+        //Enregistrement des listener des Sensors
         if(depreciatedOrientation){
+            //Utilisation dépréciée
             mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         else{
+            //Nouvelle façon de travailler avec un Accéleromètre et un Magnétomètre
             mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -187,9 +223,11 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        //Déconnexion de l'API
         mGoogleApiClient.disconnect();
+        //Arrêt des listener de Sensors
         mSensorManager.unregisterListener(this);
-   
+
     }
 
     @Override
@@ -197,6 +235,7 @@ public class MapsActivity extends FragmentActivity implements
 
         Log.d("test", "OnMapReady");
 
+        //Configuration de la Map
         mMap = map;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setAllGesturesEnabled(false);
@@ -238,20 +277,57 @@ public class MapsActivity extends FragmentActivity implements
         });
     }
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false;
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+        Log.d("test", "Connecté");
+
+        //Vérifie les permissions d'accès à la localisatiion de l'utilisateur
+        if (checkLocationPermission()) {
+
+            Log.d("test", "Connecté - Permissions accordées");
+
+            //Si les permissions sont respectées
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                //Active les mises à jour de la localisation de l'utilisateur
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, REQUEST, this);
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d("test", "Connexion suspendue");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d("test", "Connexion échouée");
+    }
+
+
+    /**
+     * Permet de vérifier les permissions d'accès à la localisation de l'utilisateur et de les demander si elles ne sont pas encore validées.
+     * @return boolean True si les permissions sont accordées, sinon False
+     */
     public boolean checkLocationPermission() {
 
         Log.d("test", "CheckLocationPermission");
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        //Si les permissions ne sont pas encore accordées ...
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.d("test", "CheckLocationPermission - Passage compliqué");
 
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Si une explication est requise...
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 Log.d("test", "CheckLocationPermission - Doit donner infos");
 
@@ -265,26 +341,24 @@ public class MapsActivity extends FragmentActivity implements
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(MapsActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                                ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
                         .show();
-
-
-            } else {
+            }
+            //Si aucune explication n'est requise
+            else {
 
                 Log.d("test", "CheckLocationPermission - Demande de la permission");
 
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;
-        } else {
+        }
+        //Si les permissions sont déjà accordées
+        else {
             Log.d("test", "CheckLocationPermission - Passe direct");
 
             return true;
@@ -296,121 +370,28 @@ public class MapsActivity extends FragmentActivity implements
 
         Log.d("test", "OnRequestPersmissionResult");
 
+        //Selon le code de requête reçu
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
 
-                Log.d("test", "OnRequestPersmissionResult - Bon request code");
+                Log.d("test", "OnRequestPersmissionResult - Request code localisation");
 
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Si la permissions a été accordée
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.d("test", "OnRequestPersmissionResult - Accès autorisé");
 
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-                        Log.d("test", "OnRequestPersmissionResult - Exécution");
-
-                        //Request location updates:
-                        //locationManager.requestLocationUpdates(provider, 400, 1, this);
-
-
-                    }
-
-                } else {
-                    Log.d("test", "OnRequestPersmissionResult - Refusé");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                }
+                // Permission refusée
+                else {
+                    Log.d("test", "OnRequestPersmissionResult - Accès refusé");
 
                 }
                 return;
             }
-
         }
     }
 
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.d("test", "Connecté");
-
-        if (checkLocationPermission()) {
-            Log.d("test", "Connecté - dans le check");
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-                //mMap.setMyLocationEnabled(false); // Pour le point bleu sur notre position
-                LocationServices.FusedLocationApi.requestLocationUpdates(
-                        mGoogleApiClient,
-                        REQUEST,
-                        this);
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        Log.d("test", "Connexion suspendue");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.d("test", "Connexion echoue");
-    }
-
-
-
-
-    /**
-     * Implementation of {@link LocationListener}.
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        //Toast.makeText(this, "LocationChanged",Toast.LENGTH_LONG).show();
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        if (mMapLocationListener != null) {
-            mMapLocationListener.onLocationChanged(location);
-        }
-
-//        Toast.makeText(this, "bearing"+bearing,Toast.LENGTH_LONG).show();
-        CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
-
-        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
-
-        if(myPositionMarker==null) {
-            myPositionMarker = mMap.addMarker(
-                    new MarkerOptions().flat(true)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pepito))
-                            .anchor(0.5f, 0.5f)
-                            .position(new LatLng(location.getLatitude(), location.getLongitude())));
-        }
-        else{
-            Animation.animateMarker(latLng, myPositionMarker, false, mMap);
-            //myPositionMarker.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-        }
-
-        //Populate da world with Nachomons
-        Nachos newNachos = nachosGenerator.addNewWildNachos(myPositionMarker);
-        Marker mNachos = placeMarker(newNachos);
-        mapMarker.put(mNachos, newNachos);
-    }
-
-
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
-        return false;
-    }
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
@@ -422,30 +403,63 @@ public class MapsActivity extends FragmentActivity implements
         mMapLocationListener = null;
     }
 
+    /**
+     * Implementation of {@link LocationListener}.
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+
+        //Récupération de la position du joueur
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+        //Met à jour la localisation dans le listener
+        if (mMapLocationListener != null) {
+            mMapLocationListener.onLocationChanged(location);
+        }
+
+        //Options du marqueur du joueur
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        //Si le marqueur n'existe pas encore
+        if(myPositionMarker==null) {
+
+            //Déclaration des options du marqueur du joueur et création de celui-ci
+            myPositionMarker = mMap.addMarker(
+                    new MarkerOptions().flat(true)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.pepito))
+                            .anchor(0.5f, 0.5f)
+                            .position(new LatLng(location.getLatitude(), location.getLongitude())));
+        }
+        //Mise à jour animée de la position du marqueur joueur
+        else{
+            Animation.animateMarker(latLng, myPositionMarker, false, mMap);
+        }
+
+        //Mise à jour animée de la camera pointant sur la google map
+        CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
+
+        //Création de nouveaux Nachomons
+        Nachos newNachos = nachosGenerator.addNewWildNachos(myPositionMarker);
+        Marker mNachos = placeMarker(newNachos);
+        mapMarker.put(mNachos, newNachos);
+    }
+
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-//        if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-//
-//
-//            float angle = ((event.values[0] +32) /64)*360;
-//
-//            Log.d("test", " Value :" + angle + " / Declination : " + mDeclination + " / \n");
-//            updateCamera(angle);
-//        }
-
+        //Deux mode de calibrage de la boussoles
         if(depreciatedOrientation){
             if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
 
-
-                //float angle = ((event.values[0] +32) /64)*360;
-
-                //Log.d("test", " Value :" + angle + " / Declination : " + mDeclination + " / \n");
+                //Mises à jour du marqueur du joueur et de la camera
                 updateRotationPlayerMarker(event.values[0], 1);
-                updateCamera(event.values[0], 10);
+                updateRotationCamera(event.values[0], 10);
             }
         }
         else{
+            //Selon le Sensor déclenché récupère ses données
             switch (event.sensor.getType()){
                 case Sensor.TYPE_ACCELEROMETER:
                     System.arraycopy(event.values, 0, gravityData, 0, 3);
@@ -459,6 +473,7 @@ public class MapsActivity extends FragmentActivity implements
                     return;
             }
 
+            //Si l'acceleromètre et le magnétomètre fournissent tous les deux des informations
             if (hasGravityData && hasGeomagneticData) {
                 float identityMatrix[] = new float[9];
                 float rotationMatrix[] = new float[9];
@@ -468,62 +483,74 @@ public class MapsActivity extends FragmentActivity implements
                     float orientationMatrix[] = new float[3];
                     SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, rotationMatrix);
 
+                    //Récupération de l'azimuth permettant de faire fonctionner la boussole
                     SensorManager.getOrientation(rotationMatrix, orientationMatrix);
                     float rotationInRadians = orientationMatrix[0];
                     rotationInDegrees = (float)(Math.toDegrees(rotationInRadians)+360)%360;
 
                     Log.d("test", Double.toString(rotationInDegrees));
-//                // do something with the rotation in degrees
-//                CameraPosition oldPos = mMap.getCameraPosition();
-//                CameraPosition pos = CameraPosition.builder(oldPos).bearing((float)rotationInDegrees).build();
-//                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
 
+                    //Mises à jour du marqueur du joueur et de la camera
                     updateRotationPlayerMarker((float)rotationInDegrees, 30);
-                    updateCamera((float)rotationInDegrees, 10);
+                    updateRotationCamera((float)rotationInDegrees, 10);
 
                 }
             }
         }
-
-    }
-
-    private void updateCamera(float bearing, int precision) {
-        if(mMap != null && latLng != null){
-//            CameraPosition oldPos = mMap.getCameraPosition();
-//            CameraPosition pos = CameraPosition.builder(oldPos).bearing(bearing).build();
-//            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
-            if(Math.abs(currentBearing - bearing) > precision){
-                CameraPosition currentPlace = new CameraPosition.Builder().target(latLng).bearing(bearing).zoom(18f).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
-            }
-
-
-        }
-
-        currentBearing = bearing;
-
-    }
-
-    private void updateRotationPlayerMarker(float angle, int precision) {
-        if(myPositionMarker != null && Math.abs(myPositionMarker.getRotation()-angle) > precision){
-
-            if(SystemClock.uptimeMillis() - lastPlayerRotation > 1000){
-                Animation.rotateMarker(myPositionMarker, angle);
-                //myPositionMarker.setRotation(angle);
-                lastPlayerRotation = SystemClock.uptimeMillis();
-            }
-
-        }
-
-    }
-
-    public Marker placeMarker(Nachos nachos) {
-        Marker mNachos = mMap.addMarker(new MarkerOptions().position(nachos.getPosition()));
-        return mNachos;
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
+    /**
+     * Mise à jour de l'angle de la camera pointant sur la Google Map
+     * @param bearing angle
+     * @param precision différence minimum d'angle avant trigger
+     */
+    private void updateRotationCamera(float bearing, int precision) {
+
+        //Si la map a été initialisée et qu'une positiona déjà été trouvée
+        if(mMap != null && latLng != null){
+            //Si l'angle est suffisement différent de celui actuel
+            if(Math.abs(currentBearing - bearing) > precision){
+                //Mise à jour de la camera avec animation
+                CameraPosition currentPlace = new CameraPosition.Builder().target(latLng).bearing(bearing).zoom(18f).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
+            }
+        }
+        //Sauvegarde du nouvel angle
+        currentBearing = bearing;
+
+    }
+
+    /**
+     * Mise à jour de l'angle du marqueur du joueur sur la Google Map
+     * @param bearing angle
+     * @param precision différence minimum d'angle avant trigger
+     */
+    private void updateRotationPlayerMarker(float bearing, int precision) {
+
+        //Si le marqueur a déjà été initialisé et la différence avec l'angle actuel est assez grande
+        if(myPositionMarker != null && Math.abs(myPositionMarker.getRotation()-bearing) > precision){
+            //Si le temps écoulé depuis la dernière rotation est suffisant
+            if(SystemClock.uptimeMillis() - lastPlayerRotation > 1000){
+                //Mise à jour du marqueur avec animation
+                Animation.rotateMarker(myPositionMarker, bearing);
+                lastPlayerRotation = SystemClock.uptimeMillis();
+            }
+        }
+    }
+
+    /**
+     * Place un nouveau marqueur pour le Nachomon donné en paramètre sur la Google Map
+     * @param nachos Nachomon a placer sur la Map
+     * @return Marker du Nachomon donné
+     */
+    public Marker placeMarker(Nachos nachos) {
+        Marker mNachos = mMap.addMarker(new MarkerOptions().position(nachos.getPosition()));
+        return mNachos;
+    }
+
 }
