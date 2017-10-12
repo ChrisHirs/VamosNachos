@@ -21,6 +21,11 @@ public class NachosGenerator {
 
     }
 
+    /**
+     *
+     * @param myPositionMarker Marqueur de la position du joueur
+     * @return new Nachos
+     */
     public static Nachos addNewWildNachos(Marker myPositionMarker) {
 
         LatLng position = myPositionMarker.getPosition();

@@ -38,11 +38,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.List;
 
+import static android.R.attr.start;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -74,6 +77,9 @@ public class MapsActivity extends FragmentActivity implements
     private LatLng latLng;
 
     private Button buttonTest;
+    private Button buttonAttack;
+    private TextView textInfo;
+    private LinearLayout layoutInfo;
 
     private NachosGenerator nachosGenerator;
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
@@ -130,6 +136,14 @@ public class MapsActivity extends FragmentActivity implements
                 Toast.makeText(context, "Test", Toast.LENGTH_LONG).show();
             }
         });
+
+        layoutInfo = (LinearLayout) findViewById(R.id.layoutInfo);
+        layoutInfo.setVisibility(LinearLayout.GONE);
+
+        buttonAttack = (Button) findViewById(R.id.buttonAttack);
+        buttonAttack.setEnabled(false);
+
+        textInfo = (TextView) findViewById(R.id.textInfo);
 
         nachosGenerator = new NachosGenerator(mMap);
 
@@ -193,8 +207,31 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Nachos nachos = mapMarker.get(marker);
-                if (nachos != null) {
-                    Toast.makeText(getApplicationContext(), "Nom : " + nachos.getName() + " PV : " + Integer.toString(nachos.getPv()), Toast.LENGTH_LONG).show();
+                if (nachos != null && myPositionMarker != null) {
+                    LatLng myPosition = myPositionMarker.getPosition();
+                    LatLng nachosPosition = nachos.getPosition();
+
+                    float[] results = new float[3];
+                    double startLatitude = myPosition.latitude;
+                    double startLongitude = myPosition.longitude;
+                    double endLatitude = nachosPosition.latitude;
+                    double endLongitude = nachosPosition.longitude;
+                    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+                    if (results[0] < 40) {
+                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
+                        textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
+                        buttonAttack.setEnabled(true);
+                    }
+                    else if (results[0] < 100) {
+                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
+                        textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
+                        buttonAttack.setEnabled(false);
+                    }
+                    else {
+                        layoutInfo.setVisibility(LinearLayout.VISIBLE);
+                        textInfo.setText("Nom : ??? PV : ???");
+                        buttonAttack.setEnabled(false);
+                    }
                 }
                 return false;
             }
@@ -363,7 +400,6 @@ public class MapsActivity extends FragmentActivity implements
         Nachos newNachos = nachosGenerator.addNewWildNachos(myPositionMarker);
         Marker mNachos = placeMarker(newNachos);
         mapMarker.put(mNachos, newNachos);
-
     }
 
 
@@ -482,9 +518,7 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     public Marker placeMarker(Nachos nachos) {
-        Marker mNachos = mMap.addMarker(new MarkerOptions()
-                .position(nachos.getPosition())
-                .title(nachos.getName()));
+        Marker mNachos = mMap.addMarker(new MarkerOptions().position(nachos.getPosition()));
         return mNachos;
     }
 
