@@ -24,15 +24,12 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
@@ -62,16 +59,14 @@ public class MapsActivity extends FragmentActivity implements
     private GoogleMap mMap;
     private OnLocationChangedListener mMapLocationListener = null;
     private Marker myPositionMarker;
-    private float[] mRotationMatrix = new float[16];
 
     private SensorManager mSensorManager;
     private Sensor mMagneticSensor;
     private Sensor mAcceleroSensor;
     private Sensor mOrientationSensor;
 
-    private LocationManager locationManager;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private String provider;
+
     private float currentBearing = 0;
 
     private long lastPlayerRotation = 0;
@@ -116,8 +111,6 @@ public class MapsActivity extends FragmentActivity implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
