@@ -93,7 +93,6 @@ public class MapsActivity extends FragmentActivity implements
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     //Interface
-    private Button buttonTest;
     private Button buttonDeath;
     private Button buttonCapture;
     private TextView textInfo;
@@ -175,15 +174,6 @@ public class MapsActivity extends FragmentActivity implements
         // -------------------
         //      INTERFACE
         // -------------------
-
-        buttonTest = (Button) findViewById(R.id.buttonTest);
-        buttonTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "Test", Toast.LENGTH_LONG).show();
-            }
-        });
 
         buttonCapture = (Button) findViewById(R.id.buttonCapture);
         buttonCapture.setEnabled(false);

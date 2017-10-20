@@ -15,9 +15,10 @@
         tools:context="com.example.marcschnaebe.mynacho.MapsActivity" />
 
     <LinearLayout
+        android:id="@+id/MainLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/layoutInfo"
@@ -71,43 +72,258 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/MainLayoutBot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:layout_weight="0.09"
             android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonTest"
-                style="@style/Widget.AppCompat.Button.Borderless"
+
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Test"
-                android:textColor="@color/common_google_signin_btn_text_dark_default" />
+                android:layout_weight="0.5"
+                android:showDividers="beginning"
+                android:stretchColumns="0,1,2">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN1"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/buritops" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN1"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN2"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:cropToPadding="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/salamuchos" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN2"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN3"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/salamuchos" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN3"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN4"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/salamuchos" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN4"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN5"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/salamuchos" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN5"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_column="2"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <ImageButton
+                            android:id="@+id/imageButtonN6"
+                            style="@android:style/Widget.Holo.ImageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/salamuchos" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarN6"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:indeterminate="false"
+                            android:max="100"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:progress="25" />
+
+                    </LinearLayout>
+                </TableRow>
+
+            </TableLayout>
 
             <Button
-                android:id="@+id/buttonNothing"
+                android:id="@+id/buttonTeam"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Nothing"
+                android:text="Team"
                 android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
-            <Button
-                android:id="@+id/buttonBag"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <ImageButton
+                android:id="@+id/imageButtonBag"
+                style="@android:style/Widget.Holo.Light.ImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Bag"
-                android:textColor="@color/common_google_signin_btn_text_dark_default" />
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                android:src="@drawable/bagos" />
+
+
         </LinearLayout>
     </LinearLayout>
 
