@@ -264,7 +264,7 @@ public class MapsActivity extends FragmentActivity implements
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
 
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
-                    textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
+                    textInfo.setText("Nom: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " XP: " + nachos.getXpCurrent() + "/" + nachos.getXpMax());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 40) {
                         buttonDeath.setEnabled(true);

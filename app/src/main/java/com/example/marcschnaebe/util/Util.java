@@ -17,7 +17,7 @@ public class Util {
      */
     public static int randomInteger(int min, int max)
     {
-        Random random = new Random();
+        Random random = new Random(System.nanoTime());
         return random.nextInt(max + 1 - min) + min;
     }
 
@@ -29,7 +29,7 @@ public class Util {
      * @return nombre aléatoire double
      */
     public static double randomDouble(double min, double max) {
-        Random random = new Random();
+        Random random = new Random(System.nanoTime());
         return min + (max - min) * random.nextDouble();
     }
 
