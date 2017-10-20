@@ -38,11 +38,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,6 +76,9 @@ public class MapsActivity extends FragmentActivity implements
     //Marqueur du joueur
     private Marker myPositionMarker;
 
+    //Marqueur de la cible
+    private Marker targetMarker;
+
     //SENSORS
     private SensorManager mSensorManager;
     private Sensor mMagneticSensor;
@@ -92,6 +98,9 @@ public class MapsActivity extends FragmentActivity implements
     //Code des Permissions
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    //Joueur
+    private Player player = new Player(myPositionMarker);
+
     //Interface
     private Button buttonDeath;
     private Button buttonCapture;
@@ -99,8 +108,11 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView imageInfo;
     private LinearLayout layoutInfo;
 
+    private ArrayList<ImageButton> buttonListTeamNachos = new ArrayList<>();
+
+    private ArrayList<ProgressBar> progressBarListTeamNachos = new ArrayList<>();
+
     //Nachomons
-    private NachosGenerator nachosGenerator;
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
 
     //Paramètres pour la localisation
@@ -187,12 +199,47 @@ public class MapsActivity extends FragmentActivity implements
         textInfo = (TextView) findViewById(R.id.textInfo);
         imageInfo = (ImageView) findViewById(R.id.imageInfo);
 
+        //Remplissage de la liste de boutons de l'équipe de Nachomons
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN1));
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN2));
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN3));
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN4));
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN5));
+        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN6));
+
+        //Remplissage de la liste de barre de vie de l'équipe de Nachomons
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN1));
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN2));
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN3));
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN4));
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
+        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
+
+
+        //Remplissage de l'équipe avec les Nachomons du joueur
+        player.initTeam();
+
+        //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
+        updateDisplayInfoTeam();
+
+        buttonCapture.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(player.team.size() < Player.getMaxTeamSize()){
+                    player.team.add(player.getTarget());
+                    updateDisplayInfoTeam();
+                    targetMarker.remove();
+                    mapMarker.remove(targetMarker);
+                    layoutInfo.setVisibility(LinearLayout.GONE);
+                }
+            }
+        });
+
+
+
+
         // -------------------
         //       NACHOS
         // -------------------
-
-        //Création d'une générateur de Nachos
-        nachosGenerator = new NachosGenerator(mMap);
 
     }
 
@@ -241,7 +288,9 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                targetMarker = marker;
                 Nachos nachos = mapMarker.get(marker);
+                player.setTarget(nachos);
                 if (nachos != null && myPositionMarker != null) {
                     LatLng myPosition = myPositionMarker.getPosition();
                     LatLng nachosPosition = nachos.getPosition();
@@ -253,14 +302,23 @@ public class MapsActivity extends FragmentActivity implements
                     double endLongitude = nachosPosition.longitude;
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
 
+                    //TODO : Mise à jour sur le déplacement onlocchange
+
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
                     textInfo.setText("Nom: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " XP: " + nachos.getXpCurrent() + "/" + nachos.getXpMax());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 40) {
                         buttonDeath.setEnabled(true);
-                        buttonCapture.setEnabled(true);
+                        Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
+                        if(player.team.size() < Player.getMaxTeamSize()){
+                            buttonCapture.setEnabled(true);
+                        }
+                        else{
+                            buttonCapture.setEnabled(false);
+                        }
+
                     }
-                    else if (results[0] > 100) {
+                    else {
                         buttonDeath.setEnabled(false);
                         buttonCapture.setEnabled(false);
                     }
@@ -433,7 +491,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
         //Création de nouveaux Nachomons
-        Nachos newNachos = nachosGenerator.addNewWildNachos(myPositionMarker);
+        Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker);
         Marker mNachos = placeMarker(newNachos);
         mapMarker.put(mNachos, newNachos);
     }
@@ -547,5 +605,23 @@ public class MapsActivity extends FragmentActivity implements
                 .position(nachos.getPosition()));
         return mNachos;
     }
+
+    public void updateDisplayInfoTeam(){
+        for (int i = 0; i < Player.getMaxTeamSize(); i++){
+            if(i < player.team.size()){
+                buttonListTeamNachos.get(i).setImageResource(getResources().getIdentifier(player.team.get(i).getName().toLowerCase(), "drawable", getPackageName()));
+                progressBarListTeamNachos.get(i).setProgress(player.team.get(i).getHpPercent());
+                buttonListTeamNachos.get(i).setVisibility(View.VISIBLE);
+                progressBarListTeamNachos.get(i).setVisibility(View.VISIBLE);
+            }
+            //Cache les emplacements vides de l'équipe
+            else{
+                buttonListTeamNachos.get(i).setVisibility(View.INVISIBLE);
+                progressBarListTeamNachos.get(i).setVisibility(View.INVISIBLE);
+            }
+
+        }
+    }
+
 
 }

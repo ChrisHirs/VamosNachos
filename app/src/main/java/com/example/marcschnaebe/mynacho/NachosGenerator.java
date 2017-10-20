@@ -20,25 +20,23 @@ import static com.example.marcschnaebe.mynacho.R.id.map;
 public class NachosGenerator {
 
     // public static HashMap<String, Map> nachosMap = new HashMap<String, Map>();
-    public static ArrayList<Map> nachosList = new ArrayList<>();
+
 
     private static final Map<String, String> caraponchoMap = new HashMap<String, String>(){{ put("name", "Caraponcho"); put("type", "Water"); put("health-points", "10"); put("attack-points", "2"); }};
     private static final Map<String, String> salamuchosMap = new HashMap<String, String>(){{ put("name", "Salamuchos"); put("type", "Fire"); put("health-points", "10"); put("attack-points", "3"); }};
-    private static final Map<String, String> buritopsMap = new HashMap<String, String>(){{ put("name", "Buritops"); put("type", "Rock"); put("health-points", "5"); put("attack-points", "1"); }};
-    private static final Map<String, String> mustaupicosMap = new HashMap<String, String>(){{ put("name", "Mustaupicos"); put("type", "Ground"); put("health-points", "5"); put("attack-points", "1"); }};
+    private static final Map<String, String> buritopsMap = new HashMap<String, String>(){{ put("name", "Buritops"); put("type", "Rock"); put("health-points", "10"); put("attack-points", "1"); }};
+    private static final Map<String, String> mustaupicosMap = new HashMap<String, String>(){{ put("name", "Mustaupicos"); put("type", "Ground"); put("health-points", "10"); put("attack-points", "1"); }};
     private static final Map<String, String> bulbiatchosMap = new HashMap<String, String>(){{ put("name", "Bulbiatchos"); put("type", "Grass"); put("health-points", "10"); put("attack-points", "2"); }};
     private static final Map<String, String> maracachuMap = new HashMap<String, String>(){{ put("name", "Maracachu"); put("type", "Electric"); put("health-points", "10"); put("attack-points", "3"); }};
 
-    public NachosGenerator(GoogleMap mMap) {
-
-        nachosList.add(caraponchoMap);
-        nachosList.add(salamuchosMap);
-        nachosList.add(buritopsMap);
-        nachosList.add(mustaupicosMap);
-        nachosList.add(bulbiatchosMap);
-        nachosList.add(maracachuMap);
-
-    }
+    public static ArrayList<Map> nachosList = new ArrayList<Map>(){{
+        add(caraponchoMap);
+        add(salamuchosMap);
+        add(buritopsMap);
+        add(mustaupicosMap);
+        add(bulbiatchosMap);
+        add(maracachuMap);
+    }};
 
     /**
      * Creates a new Nachos.
@@ -51,10 +49,15 @@ public class NachosGenerator {
         //On récupère une liste d'un nachos au hasard
         Map<String, String> mapNachos = nachosList.get(Util.randomInteger(0, nachosList.size()-1));
 
+        double latitude = 0;
+        double longitude = 0;
+
         //On choisit une position au hasard d'après la position du joueur
-        LatLng position = myPositionMarker.getPosition();
-        double latitude = Util.randomDouble(position.latitude - 0.0015, position.latitude + 0.0015);
-        double longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
+        if(myPositionMarker != null){
+            LatLng position = myPositionMarker.getPosition();
+            latitude = Util.randomDouble(position.latitude - 0.0015, position.latitude + 0.0015);
+            longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
+        }
 
         //Attributs
         String name = mapNachos.get("name");

@@ -56,6 +56,10 @@ public class Nachos {
 
     }
 
+    public int getHpPercent(){
+        return (int)(this.getHpCurrent()/this.getHpMax()*100);
+    }
+
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
 
     public String getName() {
