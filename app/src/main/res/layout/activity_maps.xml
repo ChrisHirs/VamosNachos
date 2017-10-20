@@ -44,12 +44,28 @@
                 android:textAlignment="center"
                 android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
-            <Button
-                android:id="@+id/buttonAttack"
-                style="@style/Widget.AppCompat.Button.Colored"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Attack!" />
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonDeath"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="DeathMatch" />
+
+                <Button
+                    android:id="@+id/buttonCapture"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Capture" />
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

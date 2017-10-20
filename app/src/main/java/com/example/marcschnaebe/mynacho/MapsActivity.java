@@ -46,7 +46,6 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.R.attr.start;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -95,7 +94,8 @@ public class MapsActivity extends FragmentActivity implements
 
     //Interface
     private Button buttonTest;
-    private Button buttonAttack;
+    private Button buttonDeath;
+    private Button buttonCapture;
     private TextView textInfo;
     private ImageView imageInfo;
     private LinearLayout layoutInfo;
@@ -185,8 +185,11 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-        buttonAttack = (Button) findViewById(R.id.buttonAttack);
-        buttonAttack.setEnabled(false);
+        buttonCapture = (Button) findViewById(R.id.buttonCapture);
+        buttonCapture.setEnabled(false);
+
+        buttonDeath = (Button) findViewById(R.id.buttonDeath);
+        buttonDeath.setEnabled(false);
 
         layoutInfo = (LinearLayout) findViewById(R.id.layoutInfo);
         layoutInfo.setVisibility(LinearLayout.GONE);
@@ -264,10 +267,12 @@ public class MapsActivity extends FragmentActivity implements
                     textInfo.setText("Nom : " + nachos.getName() + " PV : " + nachos.getPv());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 40) {
-                        buttonAttack.setEnabled(true);
+                        buttonDeath.setEnabled(true);
+                        buttonCapture.setEnabled(true);
                     }
                     else if (results[0] > 100) {
-                        buttonAttack.setEnabled(false);
+                        buttonDeath.setEnabled(false);
+                        buttonCapture.setEnabled(false);
                     }
                 }
                 return false;
