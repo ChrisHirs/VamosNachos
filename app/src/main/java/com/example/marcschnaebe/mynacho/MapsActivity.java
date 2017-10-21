@@ -36,6 +36,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -47,8 +48,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import static android.R.attr.button;
+import static android.R.attr.y;
+import static android.widget.Toast.makeText;
+import static com.example.marcschnaebe.mynacho.R.id.buttonTeam;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -91,6 +97,10 @@ public class MapsActivity extends FragmentActivity implements
     private boolean hasGravityData = false;
     private boolean hasGeomagneticData = false;
     private double rotationInDegrees;
+
+    //Boolean pour différencier la capture du deathmatch
+    private boolean isCapturing = false;
+    private boolean isDeathMatching = false;
 
     //Type de sensors utilisés pour la boussole (true = déprécié)
     private boolean depreciatedOrientation = false;
@@ -225,16 +235,61 @@ public class MapsActivity extends FragmentActivity implements
         buttonCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(player.team.size() < Player.getMaxTeamSize()){
-                    player.team.add(player.getTarget());
-                    updateDisplayInfoTeam();
-                    targetMarker.remove();
-                    mapMarker.remove(targetMarker);
-                    layoutInfo.setVisibility(LinearLayout.GONE);
+                    isDeathMatching = false;
+                    isCapturing = true;
+                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to fight!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+        buttonDeath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isCapturing = false;
+                isDeathMatching = true;
+                Toast.makeText(getApplicationContext(), "Choose a Nachomons to fight!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        for (i = 0; i < buttonListTeamNachos.size(); i++) {
+            final int index = i;
+            ImageButton button = buttonListTeamNachos.get(i);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Capture
+                    if (player.getTarget() != null && isCapturing) {
+                        Nachos chosenNachos = player.team.get(index);
+                        if (chosenNachos.isWinner(player.getTarget())) {
+                            player.getTarget().setHpCurrent(0);
+                            player.team.add(player.getTarget());
+                        }
+                        else {
+                            player.team.remove(chosenNachos);
+                        }
+                        isCapturing = false;
+                    }
+
+                    //Deathmatch
+                    if (player.getTarget() != null && isDeathMatching) {
+                        Nachos chosenNachos = player.team.get(index);
+                        if (chosenNachos.isWinner(player.getTarget())) {
+                            chosenNachos.addToCurrentXp(5);
+                        }
+                        else {
+                            player.team.remove(chosenNachos);
+                        }
+                        isDeathMatching = false;
+                    }
+
+                    updateDisplayInfoTeam();
+                    player.setTarget(null);
+                    targetMarker.remove();
+                    mapMarker.remove(targetMarker);
+                    layoutInfo.setVisibility(LinearLayout.GONE);
+                }
+            });
+        }
 
 
         // -------------------
@@ -305,9 +360,9 @@ public class MapsActivity extends FragmentActivity implements
                     //TODO : Mise à jour sur le déplacement onlocchange
 
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
-                    textInfo.setText("Nom: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " XP: " + nachos.getXpCurrent() + "/" + nachos.getXpMax());
+                    textInfo.setText("Name: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " LVL: " + nachos.getLevel());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
-                    if (results[0] < 40) {
+                    if (results[0] < 400) { // < 40
                         buttonDeath.setEnabled(true);
                         Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
                         if(player.team.size() < Player.getMaxTeamSize()){
@@ -491,7 +546,7 @@ public class MapsActivity extends FragmentActivity implements
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
         //Création de nouveaux Nachomons
-        Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker);
+        Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
         Marker mNachos = placeMarker(newNachos);
         mapMarker.put(mNachos, newNachos);
     }
@@ -607,21 +662,20 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     public void updateDisplayInfoTeam(){
-        for (int i = 0; i < Player.getMaxTeamSize(); i++){
-            if(i < player.team.size()){
+        for (int i = 0; i < Player.getMaxTeamSize(); i++) {
+            if (i < player.team.size()) {
                 buttonListTeamNachos.get(i).setImageResource(getResources().getIdentifier(player.team.get(i).getName().toLowerCase(), "drawable", getPackageName()));
                 progressBarListTeamNachos.get(i).setProgress(player.team.get(i).getHpPercent());
                 buttonListTeamNachos.get(i).setVisibility(View.VISIBLE);
                 progressBarListTeamNachos.get(i).setVisibility(View.VISIBLE);
             }
             //Cache les emplacements vides de l'équipe
-            else{
+            else {
                 buttonListTeamNachos.get(i).setVisibility(View.INVISIBLE);
                 progressBarListTeamNachos.get(i).setVisibility(View.INVISIBLE);
             }
 
         }
     }
-
 
 }

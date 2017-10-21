@@ -35,8 +35,21 @@ public class Player {
 
     public void initTeam(){
         for (int i = 0 ; i < 1; i++){
-            team.add(i, NachosGenerator.addNewWildNachos(marker));
+            team.add(i, NachosGenerator.addNewWildNachos(marker, getMeanLevelTeam()));
         }
+    }
+
+    public double getMeanLevelTeam() {
+        double sum = 0.;
+
+        if (!team.isEmpty()) {
+            for (Nachos nachos : team) {
+                sum += nachos.getLevel();
+            }
+            return sum / (double) team.size();
+        }
+
+        return 1.;
     }
 
     /* -------  Getter & Setter  ------ */

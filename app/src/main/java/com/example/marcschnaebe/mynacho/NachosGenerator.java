@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.R.attr.level;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 /**
@@ -19,8 +20,7 @@ import static com.example.marcschnaebe.mynacho.R.id.map;
 
 public class NachosGenerator {
 
-    // public static HashMap<String, Map> nachosMap = new HashMap<String, Map>();
-
+    /* -------  Consts  ------ */
 
     private static final Map<String, String> caraponchoMap = new HashMap<String, String>(){{ put("name", "Caraponcho"); put("type", "Water"); put("health-points", "10"); put("attack-points", "2"); }};
     private static final Map<String, String> salamuchosMap = new HashMap<String, String>(){{ put("name", "Salamuchos"); put("type", "Fire"); put("health-points", "10"); put("attack-points", "3"); }};
@@ -28,6 +28,8 @@ public class NachosGenerator {
     private static final Map<String, String> mustaupicosMap = new HashMap<String, String>(){{ put("name", "Mustaupicos"); put("type", "Ground"); put("health-points", "10"); put("attack-points", "1"); }};
     private static final Map<String, String> bulbiatchosMap = new HashMap<String, String>(){{ put("name", "Bulbiatchos"); put("type", "Grass"); put("health-points", "10"); put("attack-points", "2"); }};
     private static final Map<String, String> maracachuMap = new HashMap<String, String>(){{ put("name", "Maracachu"); put("type", "Electric"); put("health-points", "10"); put("attack-points", "3"); }};
+
+    /* -------  Attributes  ------ */
 
     public static ArrayList<Map> nachosList = new ArrayList<Map>(){{
         add(caraponchoMap);
@@ -38,13 +40,16 @@ public class NachosGenerator {
         add(maracachuMap);
     }};
 
+    /* -------  Methods ------- */
+
     /**
      * Creates a new Nachos.
      *
      * @param myPositionMarker Marqueur de la position du joueur
+     * @param meanLevel Niveau moyen de l'équipe
      * @return new Nachos
      */
-    public static Nachos addNewWildNachos(Marker myPositionMarker) {
+    public static Nachos addNewWildNachos(Marker myPositionMarker, double meanLevel) {
 
         //On récupère une liste d'un nachos au hasard
         Map<String, String> mapNachos = nachosList.get(Util.randomInteger(0, nachosList.size()-1));
@@ -59,13 +64,17 @@ public class NachosGenerator {
             longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
         }
 
+        //Niveau d'après les Nachomons déjà présents dans l'équipe
+        int level = (int) meanLevel + Util.randomInteger(-2, 2);
+        level = (level > 0) ? level : 1;
+
         //Attributs
         String name = mapNachos.get("name");
         String type = mapNachos.get("type");
         int hp = Integer.parseInt(mapNachos.get("health-points"));
         int ap = Integer.parseInt(mapNachos.get("attack-points"));
 
-        return new Nachos(latitude, longitude, name, type, hp, ap);
+        return new Nachos(latitude, longitude, name, type, hp, ap, level);
 
     }
 

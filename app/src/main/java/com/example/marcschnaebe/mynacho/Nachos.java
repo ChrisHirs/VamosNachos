@@ -1,10 +1,14 @@
 package com.example.marcschnaebe.mynacho;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.example.marcschnaebe.util.Util;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Map;
 
+import static android.R.attr.level;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 /**
@@ -13,12 +17,14 @@ import static com.example.marcschnaebe.mynacho.R.id.map;
 
 public class Nachos {
 
+    /* -------  Attributes  ------ */
+
     private LatLng position;
 
     private String name;
     private String type;
 
-    private int lvl;
+    private int level;
     private int xpCurrent;
     private int xpMax;
 
@@ -26,41 +32,74 @@ public class Nachos {
     private int hpCurrent;
     private int hpMax;
 
-    public Nachos(double latitude, double longitude, String _name, String _type, int _hp, int _ap) {
+    /* -------  Constructor ------- */
+
+    public Nachos(double latitude, double longitude, String _name, String _type, int _hp, int _ap, int _level) {
 
         position = new LatLng(latitude, longitude);
 
         name = _name;
         type = _type;
 
-        //TODO: level sur le niveau moyen des Nachomons attrapés.
-        lvl = 1;
+        level = _level;
         xpCurrent = 0;
-        xpMax = lvl * 10;
+        xpMax = level * 10;
 
-        ap = _ap + Util.randomInteger(-2, 2);
-        hpMax = _hp + Util.randomInteger(-5, 5);
+        ap = _ap + level + Util.randomInteger(-1, 1);
+        hpMax = _hp + level + Util.randomInteger(-3, 3);
         hpCurrent = hpMax;
 
     }
+
+    /* -------  Methods ------- */
 
     public void leveledUp () {
 
-        lvl++;
+        level++;
         xpCurrent = 0;
-        xpMax = lvl * 10;
+        xpMax = level * 10;
 
-        ap = ap + 2;
-        hpMax = hpMax + 5;
+        ap += 2;
+        hpMax += 5;
         hpCurrent = hpMax;
 
     }
 
-    public int getHpPercent(){
-        return (int)(this.getHpCurrent()/this.getHpMax()*100);
+    public void addToCurrentXp(int xp) {
+        xpCurrent += xp;
+        if (xpCurrent >= xpMax) {
+            leveledUp();
+        }
+    }
+
+    public boolean isWinner (Nachos enemy) {
+        do {
+            enemy.setHpCurrent(enemy.getHpCurrent() - ap);
+            hpCurrent -= enemy.getAp();
+        } while ( (hpCurrent > 0) && (enemy.getHpCurrent() > 0) );
+
+        //Du lourd
+        Log.d("Combat", name + "(" + ap + ")" + " LVL: " + level + " PV: " + hpCurrent + "/" +
+                hpMax + " XP: " + xpCurrent + "/" + xpMax + " -vs- " +
+                enemy.getName() + "(" + enemy.getAp() + ")" + " LVL: " + enemy.getLevel() +
+                " PV: " + enemy.getHpCurrent() + "/" + enemy.getHpMax() + " XP: " +
+                enemy.getXpCurrent() + "/" + enemy.getXpMax());
+
+        if (hpCurrent <= 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public int getHpPercent() {
+        double percent = (double) hpCurrent/ (double) hpMax * 100.;
+        return (int) percent;
     }
 
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
+
+    /* -------  Getter & Setter  ------ */
 
     public String getName() {
         return name;
@@ -82,9 +121,9 @@ public class Nachos {
         this.position = position;
     }
 
-    public int getLvl() { return lvl; }
+    public int getLevel() { return level; }
 
-    public void setLvl(int lvl) { this.lvl = lvl; }
+    public void setLevel(int level) { this.level = level; }
 
     public int getXpCurrent() { return xpCurrent; }
 
