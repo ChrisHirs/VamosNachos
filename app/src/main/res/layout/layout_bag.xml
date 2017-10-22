@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Bag"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-
+    <TableLayout
+        android:id="@+id/layoutBag"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="visible"
+        android:stretchColumns="true"
+        android:shrinkColumns="true">
+    </TableLayout>
 </LinearLayout>
+
+

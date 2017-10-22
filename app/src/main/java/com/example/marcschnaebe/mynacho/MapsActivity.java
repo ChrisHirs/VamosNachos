@@ -1,6 +1,33 @@
 package com.example.marcschnaebe.mynacho;
 
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -19,33 +46,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,10 +108,23 @@ public class MapsActivity extends FragmentActivity implements
     private Player player = new Player(myPositionMarker);
 
     //Interface
+
+    //Items
+    private Button buttonTake;
+    private TextView textItemsInfo;
+    private ImageView imageItemsInfo;
+    private LinearLayout layoutItemsInfo;
+
+    private TableLayout layoutBag;
+    private ImageButton buttonBag;
+
+    final ImageButton[] items = new ImageButton[50];
+    TableRow[] row =  new TableRow[10];
+
+    //Nachos
     private Button buttonDeath;
     private Button buttonCapture;
     private ImageButton buttonTeam;
-    private ImageButton buttonBag;
 
     private TextView textInfo;
     private ImageView imageInfo;
@@ -126,6 +139,9 @@ public class MapsActivity extends FragmentActivity implements
     private ArrayList<ImageButton> buttonListUpperTeamNachos = new ArrayList<>();
 
     private ArrayList<ProgressBar> progressBarListUpperTeamNachos = new ArrayList<>();
+
+    //Items
+    private HashMap<Marker, Item> mapMarkerItems = new HashMap<Marker, Item>();
 
     //Nachomons
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
@@ -202,6 +218,19 @@ public class MapsActivity extends FragmentActivity implements
         //      INTERFACE
         // -------------------
 
+        //Items
+        buttonTake =  (Button) findViewById(R.id.buttonTake);
+
+        layoutItemsInfo = (LinearLayout) findViewById(R.id.layoutItemsInfo);
+        layoutItemsInfo.setVisibility(LinearLayout.GONE);
+
+        textItemsInfo = (TextView) findViewById(R.id.textItemsInfo);
+        imageItemsInfo = (ImageView) findViewById(R.id.imageItemsInfo);
+
+        layoutBag = (TableLayout) findViewById(R.id.layoutBag);
+        buttonBag = (ImageButton) findViewById(R.id.imageButtonBag);
+
+        //Nachos
         buttonCapture = (Button) findViewById(R.id.buttonCapture);
         buttonCapture.setEnabled(false);
 
@@ -256,10 +285,60 @@ public class MapsActivity extends FragmentActivity implements
 
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
-
-
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
         updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
+
+        //crée le layout pour le bag
+        int itemId=0;
+        for(int l=0; l<10; l++){
+            row[l] = new TableRow(this);
+            for(int k=0; k<5; k++ ){
+                row[l].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
+                items[itemId] = new ImageButton(this);
+                row[l].addView(items[itemId]);
+                itemId++;
+            }
+            layoutBag.addView(row[l]);
+            layoutBag.setShrinkAllColumns(true);
+            layoutBag.setStretchAllColumns(true);
+            layoutBag.fill
+        }
+
+        buttonBag.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //viewFlipper.showNext();
+                /*layoutInfo.setVisibility(TableLayout.GONE);
+                layoutItemsInfo.setVisibility(TableLayout.GONE);*/
+
+                for(int i=0; i < player.bag.size(); i++){
+                    items[i].setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
+                }
+                layoutBag.setVisibility(TableLayout.VISIBLE);
+
+                if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
+                }
+                else{
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_bag)));
+                }
+            }
+        });
+
+        buttonTake.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(player.bag.size() < Player.getMaxBagSize()){
+                    player.bag.add(player.getItemsTarget());
+                    targetMarker.remove();
+                    mapMarkerItems.remove(targetMarker);
+                    layoutItemsInfo.setVisibility(LinearLayout.GONE);
+                }
+
+                for(int i=0; i<player.bag.size(); i++){
+                    Log.d("bag", player.bag.get(i).getItemToString());
+                }
+            }
+        });
+
 
         buttonTeam.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -274,20 +353,6 @@ public class MapsActivity extends FragmentActivity implements
 
             }
         });
-
-        buttonBag.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //viewFlipper.showNext();
-                if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
-                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
-                }
-                else{
-                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_bag)));
-                }
-
-            }
-        });
-
 
         buttonCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -402,6 +467,10 @@ public class MapsActivity extends FragmentActivity implements
                 targetMarker = marker;
                 Nachos nachos = mapMarker.get(marker);
                 player.setTarget(nachos);
+
+                Item items = mapMarkerItems.get(marker);
+                player.setItemsTarget(items);
+
                 if (nachos != null && myPositionMarker != null) {
                     LatLng myPosition = myPositionMarker.getPosition();
                     LatLng nachosPosition = nachos.getPosition();
@@ -415,6 +484,7 @@ public class MapsActivity extends FragmentActivity implements
 
                     //TODO : Mise à jour sur le déplacement onlocchange
 
+                    layoutItemsInfo.setVisibility(LinearLayout.GONE);
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
                     textInfo.setText("Name: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " LVL: " + nachos.getLevel());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
@@ -432,6 +502,38 @@ public class MapsActivity extends FragmentActivity implements
                     else {
                         buttonDeath.setEnabled(false);
                         buttonCapture.setEnabled(false);
+                    }
+                }
+
+                if (items != null && myPositionMarker != null) {
+                    LatLng myPosition = myPositionMarker.getPosition();
+                    LatLng itemsPosition = items.getPosition();
+
+                    float[] results = new float[3];
+                    double startLatitude = myPosition.latitude;
+                    double startLongitude = myPosition.longitude;
+                    double endLatitude = itemsPosition.latitude;
+                    double endLongitude = itemsPosition.longitude;
+                    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+
+                    //TODO : Mise à jour sur le déplacement onlocchange
+
+                    layoutInfo.setVisibility(LinearLayout.GONE);
+                    layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
+                    textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints());
+                    imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
+                    if (results[0] < 100) {
+                        Log.d("bag", Integer.toString(player.bag.size()) + " / " + Integer.toString(Player.getMaxBagSize()));
+                        if(player.team.size() < Player.getMaxTeamSize()){
+                            buttonTake.setEnabled(true);
+                        }
+                        else{
+                            buttonTake.setEnabled(false);
+                        }
+
+                    }
+                    else {
+                        buttonTake.setEnabled(false);
                     }
                 }
                 return false;
@@ -601,10 +703,14 @@ public class MapsActivity extends FragmentActivity implements
         CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
-        //Création de nouveaux Nachomons
+        //Création de nouveaux Nachomons et d'Items
         Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
         Marker mNachos = placeMarker(newNachos);
         mapMarker.put(mNachos, newNachos);
+
+        Item newItem =  ItemsGenerator.addNewItem(myPositionMarker);
+        Marker mItem = placeItemMarker(newItem);
+        mapMarkerItems.put(mItem, newItem);
     }
 
 
@@ -703,6 +809,18 @@ public class MapsActivity extends FragmentActivity implements
                 lastPlayerRotation = SystemClock.uptimeMillis();
             }
         }
+    }
+
+    /**
+     * Place un nouveau marqueur pour l'item donné en paramètre sur la Google Map
+     * @param item Item a placer sur la Map
+     * @return Marker de l'Item donné
+     */
+    public Marker placeItemMarker(Item item) {
+        Marker mItem = mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(item.getName().toLowerCase(), "drawable", getPackageName())))
+                .position(item.getPosition()));
+        return mItem;
     }
 
     /**

@@ -13,17 +13,17 @@ public class Player {
     /* -------  Consts  ------ */
 
     private static int maxTeamSize = 6;
+    private static int maxBagSize = 50;
 
     /* -------  Attributes  ------ */
 
     private Nachos target = null;
+    private Item targetItem = null;
 
     private Marker marker;
 
     public ArrayList<Nachos> team = new ArrayList<Nachos>();
-
-    //public ArrayList<Item> bag = new ArrayList<Item>();  //Pour le sac
-
+    public ArrayList<Item> bag = new ArrayList<Item>();
 
     /* -------  Constructor ------- */
 
@@ -55,6 +55,7 @@ public class Player {
     /* -------  Getter & Setter  ------ */
 
     public static int getMaxTeamSize(){ return maxTeamSize;}
+    public static int getMaxBagSize(){ return maxBagSize;}
 
     public Marker getMarker() {
         return marker;
@@ -68,9 +69,11 @@ public class Player {
         return target;
     }
 
-    public void setTarget(Nachos target) {
-        this.target = target;
+    public void setTarget(Nachos target) { this.target = target; }
+
+    public Item getItemsTarget() {
+        return targetItem;
     }
 
-
+    public void setItemsTarget(Item target) { this.targetItem = target; }
 }
