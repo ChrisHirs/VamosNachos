@@ -45,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,9 +115,14 @@ public class MapsActivity extends FragmentActivity implements
     //Interface
     private Button buttonDeath;
     private Button buttonCapture;
+    private Button buttonTeam;
+    private ImageButton buttonBag;
+
     private TextView textInfo;
     private ImageView imageInfo;
     private LinearLayout layoutInfo;
+
+    private ViewFlipper viewFlipper;
 
     private ArrayList<ImageButton> buttonListTeamNachos = new ArrayList<>();
 
@@ -203,11 +209,16 @@ public class MapsActivity extends FragmentActivity implements
         buttonDeath = (Button) findViewById(R.id.buttonDeath);
         buttonDeath.setEnabled(false);
 
+        buttonTeam = (Button) findViewById(R.id.buttonTeam);
+
+        buttonBag = (ImageButton) findViewById(R.id.imageButtonBag);
+
         layoutInfo = (LinearLayout) findViewById(R.id.layoutInfo);
         layoutInfo.setVisibility(LinearLayout.GONE);
 
         textInfo = (TextView) findViewById(R.id.textInfo);
         imageInfo = (ImageView) findViewById(R.id.imageInfo);
+
 
         //Remplissage de la liste de boutons de l'équipe de Nachomons
         buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN1));
@@ -229,8 +240,40 @@ public class MapsActivity extends FragmentActivity implements
         //Remplissage de l'équipe avec les Nachomons du joueur
         player.initTeam();
 
+
+        viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
+
+
+
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
         updateDisplayInfoTeam();
+
+        buttonTeam.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //viewFlipper.showNext();
+                if(viewFlipper.getCurrentView() == findViewById(R.id.layout_team)){
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
+                }
+                else{
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_team)));
+                }
+
+            }
+        });
+
+        buttonBag.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //viewFlipper.showNext();
+                if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
+                }
+                else{
+                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_bag)));
+                }
+
+            }
+        });
+
 
         buttonCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -290,7 +333,6 @@ public class MapsActivity extends FragmentActivity implements
                 }
             });
         }
-
 
         // -------------------
         //       NACHOS
