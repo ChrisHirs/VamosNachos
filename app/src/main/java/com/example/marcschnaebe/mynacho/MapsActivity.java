@@ -49,13 +49,8 @@ import android.widget.ViewFlipper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import static android.R.attr.button;
-import static android.R.attr.y;
-import static android.widget.Toast.makeText;
-import static com.example.marcschnaebe.mynacho.R.id.buttonTeam;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -115,7 +110,7 @@ public class MapsActivity extends FragmentActivity implements
     //Interface
     private Button buttonDeath;
     private Button buttonCapture;
-    private Button buttonTeam;
+    private ImageButton buttonTeam;
     private ImageButton buttonBag;
 
     private TextView textInfo;
@@ -124,9 +119,13 @@ public class MapsActivity extends FragmentActivity implements
 
     private ViewFlipper viewFlipper;
 
-    private ArrayList<ImageButton> buttonListTeamNachos = new ArrayList<>();
+    private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
 
-    private ArrayList<ProgressBar> progressBarListTeamNachos = new ArrayList<>();
+    private ArrayList<ProgressBar> progressBarListBottomTeamNachos = new ArrayList<>();
+
+    private ArrayList<ImageButton> buttonListUpperTeamNachos = new ArrayList<>();
+
+    private ArrayList<ProgressBar> progressBarListUpperTeamNachos = new ArrayList<>();
 
     //Nachomons
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
@@ -209,7 +208,7 @@ public class MapsActivity extends FragmentActivity implements
         buttonDeath = (Button) findViewById(R.id.buttonDeath);
         buttonDeath.setEnabled(false);
 
-        buttonTeam = (Button) findViewById(R.id.buttonTeam);
+        buttonTeam = (ImageButton) findViewById(R.id.imageButtonTeam);
 
         buttonBag = (ImageButton) findViewById(R.id.imageButtonBag);
 
@@ -221,20 +220,34 @@ public class MapsActivity extends FragmentActivity implements
 
 
         //Remplissage de la liste de boutons de l'équipe de Nachomons
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN1));
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN2));
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN3));
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN4));
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN5));
-        buttonListTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN6));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN1));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN2));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN3));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN4));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN5));
+        buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN6));
+
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN1));
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN2));
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN3));
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN4));
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN5));
+        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN6));
 
         //Remplissage de la liste de barre de vie de l'équipe de Nachomons
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN1));
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN2));
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN3));
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN4));
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
-        progressBarListTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN1));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN2));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN3));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN4));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
+        progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
+
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN1));
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN2));
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN3));
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN4));
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN5));
+        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN6));
 
 
         //Remplissage de l'équipe avec les Nachomons du joueur
@@ -246,7 +259,7 @@ public class MapsActivity extends FragmentActivity implements
 
 
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
-        updateDisplayInfoTeam();
+        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
 
         buttonTeam.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -256,6 +269,7 @@ public class MapsActivity extends FragmentActivity implements
                 }
                 else{
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_team)));
+                    updateDisplayInfoTeam(buttonListUpperTeamNachos, progressBarListUpperTeamNachos);
                 }
 
             }
@@ -294,9 +308,9 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-        for (i = 0; i < buttonListTeamNachos.size(); i++) {
+        for (i = 0; i < buttonListBottomTeamNachos.size(); i++) {
             final int index = i;
-            ImageButton button = buttonListTeamNachos.get(i);
+            ImageButton button = buttonListBottomTeamNachos.get(i);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -325,7 +339,7 @@ public class MapsActivity extends FragmentActivity implements
                         isDeathMatching = false;
                     }
 
-                    updateDisplayInfoTeam();
+                    updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
                     player.setTarget(null);
                     targetMarker.remove();
                     mapMarker.remove(targetMarker);
@@ -703,18 +717,18 @@ public class MapsActivity extends FragmentActivity implements
         return mNachos;
     }
 
-    public void updateDisplayInfoTeam(){
+    public void updateDisplayInfoTeam(ArrayList<ImageButton> buttonList, ArrayList<ProgressBar> progressBarList){
         for (int i = 0; i < Player.getMaxTeamSize(); i++) {
             if (i < player.team.size()) {
-                buttonListTeamNachos.get(i).setImageResource(getResources().getIdentifier(player.team.get(i).getName().toLowerCase(), "drawable", getPackageName()));
-                progressBarListTeamNachos.get(i).setProgress(player.team.get(i).getHpPercent());
-                buttonListTeamNachos.get(i).setVisibility(View.VISIBLE);
-                progressBarListTeamNachos.get(i).setVisibility(View.VISIBLE);
+                buttonList.get(i).setImageResource(getResources().getIdentifier(player.team.get(i).getName().toLowerCase(), "drawable", getPackageName()));
+                progressBarList.get(i).setProgress(player.team.get(i).getHpPercent());
+                buttonList.get(i).setVisibility(View.VISIBLE);
+                progressBarList.get(i).setVisibility(View.VISIBLE);
             }
             //Cache les emplacements vides de l'équipe
             else {
-                buttonListTeamNachos.get(i).setVisibility(View.INVISIBLE);
-                progressBarListTeamNachos.get(i).setVisibility(View.INVISIBLE);
+                buttonList.get(i).setVisibility(View.INVISIBLE);
+                progressBarList.get(i).setVisibility(View.INVISIBLE);
             }
 
         }

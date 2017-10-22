@@ -239,14 +239,16 @@
 
             </TableLayout>
 
-            <Button
-                android:id="@+id/buttonTeam"
-                style="@style/Widget.AppCompat.Button.Borderless"
+
+            <ImageButton
+                android:id="@+id/imageButtonTeam"
+                style="@android:style/Widget.Holo.Light.ImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Team"
-                android:textColor="@color/common_google_signin_btn_text_dark_default" />
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                android:src="@drawable/team" />
 
             <ImageButton
                 android:id="@+id/imageButtonBag"
