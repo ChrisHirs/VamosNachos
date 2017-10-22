@@ -281,12 +281,19 @@ public class MapsActivity extends FragmentActivity implements
 
         //Remplissage de l'équipe avec les Nachomons du joueur
         player.initTeam();
-
-
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
         updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
+
+        TableLayout.LayoutParams tableParams =
+                new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.MATCH_PARENT, 1f);
+        TableLayout.LayoutParams rowParams =
+                new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.FILL_PARENT, 1f);
+        /*TableRow.LayoutParams itemParams =
+                new TableRow.LayoutParams(TableLayout.LayoutParams.FILL_PARENT,
+                        TableLayout.LayoutParams.FILL_PARENT, 1f);*/
 
         //crée le layout pour le bag
         int itemId=0;
@@ -298,10 +305,11 @@ public class MapsActivity extends FragmentActivity implements
                 row[l].addView(items[itemId]);
                 itemId++;
             }
+            row[l].setLayoutParams(rowParams);
             layoutBag.addView(row[l]);
             layoutBag.setShrinkAllColumns(true);
             layoutBag.setStretchAllColumns(true);
-            layoutBag.fill
+            layoutBag.setLayoutParams(tableParams);
         }
 
         buttonBag.setOnClickListener(new View.OnClickListener() {
