@@ -5,6 +5,8 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -118,8 +121,9 @@ public class MapsActivity extends FragmentActivity implements
     private TableLayout layoutBag;
     private ImageButton buttonBag;
 
-    final ImageButton[] items = new ImageButton[50];
-    TableRow[] row =  new TableRow[10];
+    Item chosenItem=null;
+    final private ArrayList<ImageButton> items = new ArrayList<>();
+    private ArrayList<TableRow> row = new ArrayList<>();
 
     //Nachos
     private Button buttonDeath;
@@ -204,7 +208,7 @@ public class MapsActivity extends FragmentActivity implements
         // Création d'une liste des Sensors de l'appareil
         String sSensList = new String("");
         Sensor tmp;
-        int x,i;
+        int x, i;
         for (i=0;i<msensorList.size();i++){
             tmp = msensorList.get(i);
             sSensList = " "+sSensList+tmp.getName() + "\n";
@@ -286,47 +290,100 @@ public class MapsActivity extends FragmentActivity implements
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
         updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
 
-        TableLayout.LayoutParams tableParams =
-                new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
-                        TableLayout.LayoutParams.MATCH_PARENT, 1f);
-        TableLayout.LayoutParams rowParams =
-                new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.FILL_PARENT, 1f);
-        /*TableRow.LayoutParams itemParams =
-                new TableRow.LayoutParams(TableLayout.LayoutParams.FILL_PARENT,
-                        TableLayout.LayoutParams.FILL_PARENT, 1f);*/
+        //Création du layout pour le bag
+        final TableLayout.LayoutParams tableParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550, getResources().getDisplayMetrics()), 1f);
+        final TableLayout.LayoutParams rowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.FILL_PARENT, 1f);
 
-        //crée le layout pour le bag
-        int itemId=0;
+
+        /*int itemId=0;
         for(int l=0; l<10; l++){
-            row[l] = new TableRow(this);
+            row.add(new TableRow(this));
             for(int k=0; k<5; k++ ){
-                row[l].setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
-                items[itemId] = new ImageButton(this);
-                row[l].addView(items[itemId]);
+                row.get(l).setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
+                items.add(new ImageButton(this));
+                //items.get(itemId).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
+                row.get(l).addView(items.get(itemId));
                 itemId++;
             }
-            row[l].setLayoutParams(rowParams);
-            layoutBag.addView(row[l]);
+            row.get(l).setLayoutParams(rowParams);
+            layoutBag.addView(row.get(l));
             layoutBag.setShrinkAllColumns(true);
             layoutBag.setStretchAllColumns(true);
             layoutBag.setLayoutParams(tableParams);
-        }
+            layoutBag.setBackgroundColor(Color.DKGRAY);
+        }*/
 
         buttonBag.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //viewFlipper.showNext();
-                /*layoutInfo.setVisibility(TableLayout.GONE);
-                layoutItemsInfo.setVisibility(TableLayout.GONE);*/
-
-                for(int i=0; i < player.bag.size(); i++){
-                    items[i].setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
-                }
-                layoutBag.setVisibility(TableLayout.VISIBLE);
-
+                int j=0;
                 if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
+                    int itemId=0;
+                    for(int l=0; l<10; l++){
+                        for(int k=0; k<5; k++ ){
+                            row.get(l).removeView(items.get(itemId));
+                            itemId++;
+                        }
+                        layoutBag.removeView(row.get(l));
+                    }
+                    for (int k = 0; k<player.getMaxBagSize()/5;k++){
+                        layoutBag.removeView(row.get(k));
+                    }
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                 }
                 else{
+                    int itemId=0;
+                    items.clear();
+
+                    for(int l=0; l<10; l++){
+                        row.add(new TableRow(v.getContext()));
+                        for(int k=0; k<5; k++ ){
+                            row.get(l).setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
+                            items.add(new ImageButton(v.getContext()));
+                            //items.get(itemId).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
+                            row.get(l).addView(items.get(itemId));
+                            itemId++;
+                        }
+                        row.get(l).setLayoutParams(rowParams);
+                        layoutBag.addView(row.get(l));
+                        layoutBag.setShrinkAllColumns(true);
+                        layoutBag.setStretchAllColumns(true);
+                        layoutBag.setLayoutParams(tableParams);
+                        layoutBag.setBackgroundColor(Color.DKGRAY);
+                    }
+                    for(int i=0; i < player.bag.size(); i++){
+                        items.get(i).setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
+                    }
+                    for (j=0; j<items.size(); j++){
+                        Log.d("bag"," bag size: " + player.bag.size() + " items size: " + items.size());
+                        final int index = j;
+                        ImageButton button = items.get(j);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.d("bag", "item: "+items.get(index).toString()+ " bag size: " + player.bag.size() + " items size: " + items.size());
+                                if(player.bag.size()>0){
+                                    chosenItem = player.bag.get(index);
+                                    player.bag.remove(index);
+                                    //items.remove(index);
+                                    //items.get(index).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
+                                    /*int itemId=0;
+                                    for(int l=0; l<10; l++){
+                                        for(int k=0; k<5; k++ ){
+                                            row.get(l).removeView(items.get(itemId));
+                                            itemId++;
+                                        }
+                                        layoutBag.removeView(row.get(l));
+                                    }
+                                    for (int k = 0; k<player.getMaxBagSize()/5;k++){
+                                        layoutBag.removeView(row.get(k));
+                                    }*/
+                                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
+                                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to applie item!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                    layoutBag.setVisibility(TableLayout.VISIBLE);
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_bag)));
                 }
             }
@@ -344,6 +401,7 @@ public class MapsActivity extends FragmentActivity implements
                 for(int i=0; i<player.bag.size(); i++){
                     Log.d("bag", player.bag.get(i).getItemToString());
                 }
+                Log.d("bag", Integer.toString(player.bag.size()) + " / " + Integer.toString(Player.getMaxBagSize()));
             }
         });
 
@@ -381,6 +439,9 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
+
+
+
         for (i = 0; i < buttonListBottomTeamNachos.size(); i++) {
             final int index = i;
             ImageButton button = buttonListBottomTeamNachos.get(i);
@@ -410,6 +471,26 @@ public class MapsActivity extends FragmentActivity implements
                             player.team.remove(chosenNachos);
                         }
                         isDeathMatching = false;
+                    }
+
+                    //Items
+                    if (chosenItem != null) {
+                        player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
+                        chosenItem = null;
+
+                        //TODO: mettre dans methode pas dry utilisé plus haut aussi.
+                        int itemId = 0;
+                        for (int l = 0; l < 10; l++) {
+                            for (int k = 0; k < 5; k++) {
+                                row.get(l).removeView(items.get(itemId));
+                                itemId++;
+                            }
+                            layoutBag.removeView(row.get(l));
+                        }
+                        for (int k = 0; k < player.getMaxBagSize() / 5; k++) {
+                            layoutBag.removeView(row.get(k));
+                        }
+                        viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                     }
 
                     updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
@@ -531,7 +612,6 @@ public class MapsActivity extends FragmentActivity implements
                     textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 100) {
-                        Log.d("bag", Integer.toString(player.bag.size()) + " / " + Integer.toString(Player.getMaxBagSize()));
                         if(player.team.size() < Player.getMaxTeamSize()){
                             buttonTake.setEnabled(true);
                         }

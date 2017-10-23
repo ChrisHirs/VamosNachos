@@ -65,6 +65,15 @@ public class Nachos {
 
     }
 
+    public void addToCurrentHp(int hp){
+        if((hpCurrent+hp) <= hpMax){
+            hpCurrent+=hp;
+        }
+        else{
+            hpCurrent=hpMax;
+        }
+    }
+
     public void addToCurrentXp(int xp) {
         xpCurrent += xp;
         if (xpCurrent >= xpMax) {
