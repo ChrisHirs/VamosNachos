@@ -10,16 +10,16 @@ public class Item {
     private LatLng position;
 
     private String name;
+    private String type;
 
     private int upgradePoints;
 
-    public Item(double latitude, double longitude, String _name, int upgradePoints) {
+    public Item(double latitude, double longitude, String _name, int upgradePoints, String type) {
 
         position = new LatLng(latitude, longitude);
         name = _name;
         this.upgradePoints = upgradePoints;
-
-        //Util.randomInteger(-2, 2);
+        this.type=type;
     }
 
 
@@ -50,4 +50,8 @@ public class Item {
     public void setUpgradePoints(int upgradePoints) {
         this.upgradePoints = upgradePoints;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 }

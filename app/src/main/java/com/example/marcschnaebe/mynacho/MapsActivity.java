@@ -294,25 +294,6 @@ public class MapsActivity extends FragmentActivity implements
         final TableLayout.LayoutParams tableParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550, getResources().getDisplayMetrics()), 1f);
         final TableLayout.LayoutParams rowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.FILL_PARENT, 1f);
 
-
-        /*int itemId=0;
-        for(int l=0; l<10; l++){
-            row.add(new TableRow(this));
-            for(int k=0; k<5; k++ ){
-                row.get(l).setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
-                items.add(new ImageButton(this));
-                //items.get(itemId).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
-                row.get(l).addView(items.get(itemId));
-                itemId++;
-            }
-            row.get(l).setLayoutParams(rowParams);
-            layoutBag.addView(row.get(l));
-            layoutBag.setShrinkAllColumns(true);
-            layoutBag.setStretchAllColumns(true);
-            layoutBag.setLayoutParams(tableParams);
-            layoutBag.setBackgroundColor(Color.DKGRAY);
-        }*/
-
         buttonBag.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int j=0;
@@ -363,20 +344,7 @@ public class MapsActivity extends FragmentActivity implements
                                 Log.d("bag", "item: "+items.get(index).toString()+ " bag size: " + player.bag.size() + " items size: " + items.size());
                                 if(player.bag.size()>0){
                                     chosenItem = player.bag.get(index);
-                                    player.bag.remove(index);
-                                    //items.remove(index);
-                                    //items.get(index).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
-                                    /*int itemId=0;
-                                    for(int l=0; l<10; l++){
-                                        for(int k=0; k<5; k++ ){
-                                            row.get(l).removeView(items.get(itemId));
-                                            itemId++;
-                                        }
-                                        layoutBag.removeView(row.get(l));
-                                    }
-                                    for (int k = 0; k<player.getMaxBagSize()/5;k++){
-                                        layoutBag.removeView(row.get(k));
-                                    }*/
+
                                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                                     Toast.makeText(getApplicationContext(), "Choose a Nachomons to applie item!", Toast.LENGTH_SHORT).show();
                                 }
@@ -475,7 +443,18 @@ public class MapsActivity extends FragmentActivity implements
 
                     //Items
                     if (chosenItem != null) {
-                        player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
+                        if (chosenItem.getType() == "Health"){
+                            player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
+                            player.bag.remove(index);
+                        }
+                        else{
+                            if(chosenItem.getType()==player.team.get(index).getType()){
+                                player.team.get(index).setAp(chosenItem.getUpgradePoints());
+                                Toast.makeText(getApplicationContext(), "set Ap "+chosenItem.getType(), Toast.LENGTH_SHORT).show();
+                                player.bag.remove(chosenItem);
+                            }
+                        }
+
                         chosenItem = null;
 
                         //TODO: mettre dans methode pas dry utilisé plus haut aussi.
@@ -609,7 +588,7 @@ public class MapsActivity extends FragmentActivity implements
 
                     layoutInfo.setVisibility(LinearLayout.GONE);
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
-                    textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints());
+                    textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < 100) {
                         if(player.team.size() < Player.getMaxTeamSize()){
