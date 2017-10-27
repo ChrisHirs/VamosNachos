@@ -72,11 +72,11 @@ public class Nachos {
     }
 
     public void addToCurrentHp(int hp){
-        if((hpCurrent+hp) <= hpMax){
-            hpCurrent+=hp;
+        if((hpCurrent + hp) <= hpMax){
+            hpCurrent += hp;
         }
         else{
-            hpCurrent=hpMax;
+            hpCurrent = hpMax;
         }
     }
 
@@ -90,12 +90,12 @@ public class Nachos {
     public void addDef(int upgrade) {
         hpCurrent += upgrade;
         hpMax += upgrade;
-        hpBonus += upgrade;
+        hpBonus += 1;
     }
 
     public void addAttack(int upgrade) {
         ap += upgrade;
-        apBonus += upgrade;
+        apBonus += 1;
     }
 
     public boolean isWinner (Nachos enemy) {

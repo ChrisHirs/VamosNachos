@@ -412,11 +412,9 @@ public class MapsActivity extends FragmentActivity implements
                         if (chosenNachos.isWinner(player.getTarget())) {
                             player.getTarget().setHpCurrent(0);
                             player.team.add(player.getTarget());
-                            teamAdapter.notifyDataSetChanged();
                         }
                         else {
                             player.team.remove(chosenNachos);
-                            teamAdapter.notifyDataSetChanged();
                         }
                         isCapturing = false;
                     }
@@ -429,7 +427,6 @@ public class MapsActivity extends FragmentActivity implements
                         }
                         else {
                             player.team.remove(chosenNachos);
-                            teamAdapter.notifyDataSetChanged();
                         }
                         isDeathMatching = false;
                     }
@@ -447,6 +444,7 @@ public class MapsActivity extends FragmentActivity implements
                         else{
                             if(chosenItem.getType()== player.team.get(index).getType()){
                                 player.team.get(index).addAttack(chosenItem.getUpgradePoints());
+                                Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
                             }
                         }
@@ -469,12 +467,14 @@ public class MapsActivity extends FragmentActivity implements
                     }
 
                     if (player.getTarget() != null) {
-                        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
                         player.setTarget(null);
                         targetMarker.remove();
                         mapMarker.remove(targetMarker);
                         layoutInfo.setVisibility(LinearLayout.GONE);
                     }
+
+                    teamAdapter.notifyDataSetChanged();
+                    updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
                 }
             });
         }

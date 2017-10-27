@@ -59,6 +59,8 @@ public class MyCustomAdapter extends BaseAdapter {
             holder.nachosName = (TextView)convertView.findViewById(R.id.textViewNachosName);
             holder.nachosLevel = (TextView)convertView.findViewById(R.id.textViewLevelValue);
             holder.nachosType = (TextView)convertView.findViewById(R.id.textViewTypeValue);
+            holder.nachosAttack = (TextView)convertView.findViewById(R.id.textViewAtkValue);
+            holder.nachosDef = (TextView)convertView.findViewById(R.id.textViewDefValue);
             holder.imageNachos = (ImageButton)convertView.findViewById(R.id.imageButtonTeam);
             holder.nachosHP = (ProgressBar)convertView.findViewById(R.id.progressBarHP);
             holder.nachosXP = (ProgressBar)convertView.findViewById(R.id.progressBarXP);
@@ -69,6 +71,8 @@ public class MyCustomAdapter extends BaseAdapter {
         holder.nachosName.setText(mData.get(position).getName());
         holder.nachosLevel.setText(String.valueOf(mData.get(position).getLevel()));
         holder.nachosType.setText(mData.get(position).getType());
+        holder.nachosAttack.setText("+"+String.valueOf(mData.get(position).getApBonus()));
+        holder.nachosDef.setText("+"+String.valueOf(mData.get(position).getHpBonus()));
         holder.imageNachos.setImageResource(context.getResources().getIdentifier(mData.get(position).getName().toLowerCase(), "drawable", context.getPackageName()));
         holder.nachosHP.setProgress(mData.get(position).getHpPercent());
         holder.nachosXP.setProgress(mData.get(position).getXpPercent());
@@ -79,6 +83,8 @@ public class MyCustomAdapter extends BaseAdapter {
         public TextView nachosName;
         public TextView nachosLevel;
         public TextView nachosType;
+        public TextView nachosAttack;
+        public TextView nachosDef;
         public ImageButton imageNachos;
         public ProgressBar nachosHP;
         public ProgressBar nachosXP;
