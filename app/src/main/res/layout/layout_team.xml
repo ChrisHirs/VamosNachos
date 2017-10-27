@@ -1,7 +1,7 @@
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/listViewTeam"
     android:layout_width="match_parent"
-    android:layout_height="360dp"
+    android:layout_height="fill_parent"
     android:background="@color/colorPrimary"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"

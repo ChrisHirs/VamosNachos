@@ -7,10 +7,12 @@
     <TableLayout
         android:id="@+id/layoutBag"
         android:layout_width="fill_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:shrinkColumns="true"
         android:stretchColumns="true"
-        android:visibility="visible"></TableLayout>
+        android:visibility="visible"
+        android:background="@color/colorPrimary"
+        ></TableLayout>
 </LinearLayout>
 
 
