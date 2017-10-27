@@ -32,6 +32,9 @@ public class Nachos {
     private int hpCurrent;
     private int hpMax;
 
+    private int hpBonus;
+    private int apBonus;
+
     /* -------  Constructor ------- */
 
     public Nachos(double latitude, double longitude, String _name, String _type, int _hp, int _ap, int _level) {
@@ -48,6 +51,9 @@ public class Nachos {
         ap = _ap + level + Util.randomInteger(-1, 1);
         hpMax = _hp + level + Util.randomInteger(-3, 3);
         hpCurrent = hpMax;
+
+        hpBonus = 0;
+        apBonus = 0;
 
     }
 
@@ -79,6 +85,17 @@ public class Nachos {
         if (xpCurrent >= xpMax) {
             leveledUp();
         }
+    }
+
+    public void addDef(int upgrade) {
+        hpCurrent += upgrade;
+        hpMax += upgrade;
+        hpBonus += upgrade;
+    }
+
+    public void addAttack(int upgrade) {
+        ap += upgrade;
+        apBonus += upgrade;
     }
 
     public boolean isWinner (Nachos enemy) {
@@ -158,4 +175,12 @@ public class Nachos {
     public int getHpMax() { return hpMax; }
 
     public void setHpMax(int hpMax) { this.hpMax = hpMax; }
+
+    public int getHpBonus() { return hpBonus; }
+
+    public void setHpBonus(int hpBonus) { this.hpBonus = hpBonus; }
+
+    public int getApBonus() { return apBonus; }
+
+    public void setApBonus(int apBonus) { this.apBonus = apBonus; }
 }

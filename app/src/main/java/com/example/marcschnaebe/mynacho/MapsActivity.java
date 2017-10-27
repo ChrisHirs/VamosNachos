@@ -442,12 +442,15 @@ public class MapsActivity extends FragmentActivity implements
                     if (chosenItem != null) {
                         if (chosenItem.getType() == "Health"){
                             player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
-                            player.bag.remove(index);
+                            player.bag.remove(chosenItem);
+                        }
+                        else if (chosenItem.getType() == "Def") {
+                            player.team.get(index).addDef(chosenItem.getUpgradePoints());
+                            player.bag.remove(chosenItem);
                         }
                         else{
-                            if(chosenItem.getType()==player.team.get(index).getType()){
-                                player.team.get(index).setAp(chosenItem.getUpgradePoints());
-                                Toast.makeText(getApplicationContext(), "set Ap "+chosenItem.getType(), Toast.LENGTH_SHORT).show();
+                            if(chosenItem.getType()== player.team.get(index).getType()){
+                                player.team.get(index).addAttack(chosenItem.getUpgradePoints());
                                 player.bag.remove(chosenItem);
                             }
                         }
@@ -469,11 +472,13 @@ public class MapsActivity extends FragmentActivity implements
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                     }
 
-                    updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
-                    player.setTarget(null);
-                    targetMarker.remove();
-                    mapMarker.remove(targetMarker);
-                    layoutInfo.setVisibility(LinearLayout.GONE);
+                    if (player.getTarget() != null) {
+                        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
+                        player.setTarget(null);
+                        targetMarker.remove();
+                        mapMarker.remove(targetMarker);
+                        layoutInfo.setVisibility(LinearLayout.GONE);
+                    }
                 }
             });
         }
@@ -592,7 +597,7 @@ public class MapsActivity extends FragmentActivity implements
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
                     textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
-                    if (results[0] < 100) {
+                    if (results[0] < 400) { //40
                         if(player.team.size() < Player.getMaxTeamSize()){
                             buttonTake.setEnabled(true);
                         }
