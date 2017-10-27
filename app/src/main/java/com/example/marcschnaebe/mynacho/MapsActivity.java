@@ -1,4 +1,4 @@
-﻿package com.example.marcschnaebe.mynacho;
+package com.example.marcschnaebe.mynacho;
 
 
 import android.Manifest;
