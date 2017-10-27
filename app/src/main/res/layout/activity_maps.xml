@@ -14,28 +14,38 @@
             android:layout_height="match_parent"
             tools:context="com.example.marcschnaebe.mynacho.MapsActivity" />
 
-        <include
-            layout="@layout/layout_bottom_menu"
-            android:id="@+id/layout_bottom_menu" />
-
-        <ViewFlipper
-            android:id="@+id/myViewFlipper"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ViewFlipper
+                android:id="@+id/myViewFlipper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <include
+                    layout="@layout/layout_main"
+                    android:id="@+id/layout_main" />
+
+                <include
+                    layout="@layout/layout_team"
+                    android:id="@+id/layout_team" />
+
+                <include
+                    layout="@layout/layout_bag"
+                    android:id="@+id/layout_bag" />
+
+
+            </ViewFlipper>
 
             <include
-                layout="@layout/layout_main"
-                android:id="@+id/layout_main" />
-
-            <include
-                layout="@layout/layout_team"
-                android:id="@+id/layout_team" />
-
-            <include
-                layout="@layout/layout_bag"
-                android:id="@+id/layout_bag" />
+                layout="@layout/layout_bottom_menu"
+                android:id="@+id/layout_bottom_menu" />
 
 
-        </ViewFlipper>
+        </LinearLayout>
+
 
     </FrameLayout>

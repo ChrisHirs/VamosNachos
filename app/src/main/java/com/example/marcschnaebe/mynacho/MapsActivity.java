@@ -5,8 +5,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -55,7 +53,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.R.id.list;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -323,7 +320,6 @@ public class MapsActivity extends FragmentActivity implements
                         layoutBag.setShrinkAllColumns(true);
                         layoutBag.setStretchAllColumns(true);
                         layoutBag.setLayoutParams(tableParams);
-                        layoutBag.setBackgroundColor(Color.DKGRAY);
                     }
                     for(int i=0; i < player.bag.size(); i++){
                         items.get(i).setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
@@ -442,7 +438,7 @@ public class MapsActivity extends FragmentActivity implements
                     if (chosenItem != null) {
                         if (chosenItem.getType() == "Health"){
                             player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
-                            player.bag.remove(index);
+                            player.bag.remove(chosenItem);
                         }
                         else{
                             if(chosenItem.getType()==player.team.get(index).getType()){
@@ -592,8 +588,8 @@ public class MapsActivity extends FragmentActivity implements
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
                     textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
-                    if (results[0] < 100) {
-                        if(player.team.size() < Player.getMaxTeamSize()){
+                    if (results[0] < 400) {
+                        if(player.bag.size() < Player.getMaxBagSize()){
                             buttonTake.setEnabled(true);
                         }
                         else{
