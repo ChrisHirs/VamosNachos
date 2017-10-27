@@ -106,6 +106,11 @@ public class Nachos {
         return (int) percent;
     }
 
+    public int getXpPercent() {
+        double percent = (double) xpCurrent/ (double) xpMax * 100.;
+        return (int) percent;
+    }
+
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
 
     /* -------  Getter & Setter  ------ */

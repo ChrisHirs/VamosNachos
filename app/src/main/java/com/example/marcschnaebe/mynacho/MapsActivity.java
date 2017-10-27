@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.R.id.list;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -135,6 +137,8 @@ public class MapsActivity extends FragmentActivity implements
     private LinearLayout layoutInfo;
 
     private ViewFlipper viewFlipper;
+    private ListView listViewTeam;
+    private MyCustomAdapter teamAdapter;
 
     private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
 
@@ -260,12 +264,7 @@ public class MapsActivity extends FragmentActivity implements
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN5));
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN6));
 
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN1));
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN2));
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN3));
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN4));
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN5));
-        buttonListUpperTeamNachos.add((ImageButton) findViewById(R.id.imageButtonTeamN6));
+
 
         //Remplissage de la liste de barre de vie de l'équipe de Nachomons
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN1));
@@ -275,12 +274,7 @@ public class MapsActivity extends FragmentActivity implements
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
 
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN1));
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN2));
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN3));
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN4));
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN5));
-        progressBarListUpperTeamNachos.add((ProgressBar) findViewById(R.id.progressBarTeamN6));
+
 
 
         //Remplissage de l'équipe avec les Nachomons du joueur
@@ -382,7 +376,7 @@ public class MapsActivity extends FragmentActivity implements
                 }
                 else{
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_team)));
-                    updateDisplayInfoTeam(buttonListUpperTeamNachos, progressBarListUpperTeamNachos);
+                    //updateDisplayInfoTeam(buttonListUpperTeamNachos, progressBarListUpperTeamNachos);
                 }
 
             }
@@ -422,9 +416,11 @@ public class MapsActivity extends FragmentActivity implements
                         if (chosenNachos.isWinner(player.getTarget())) {
                             player.getTarget().setHpCurrent(0);
                             player.team.add(player.getTarget());
+                            teamAdapter.notifyDataSetChanged();
                         }
                         else {
                             player.team.remove(chosenNachos);
+                            teamAdapter.notifyDataSetChanged();
                         }
                         isCapturing = false;
                     }
@@ -437,6 +433,7 @@ public class MapsActivity extends FragmentActivity implements
                         }
                         else {
                             player.team.remove(chosenNachos);
+                            teamAdapter.notifyDataSetChanged();
                         }
                         isDeathMatching = false;
                     }
@@ -481,9 +478,14 @@ public class MapsActivity extends FragmentActivity implements
             });
         }
 
-        // -------------------
-        //       NACHOS
-        // -------------------
+        // ------------------------------
+        //       NACHOS TEAM LIST DISPLAY
+        // ------------------------------
+
+        ListView listViewTeam = (ListView) findViewById(R.id.layout_team);
+
+        teamAdapter = new MyCustomAdapter(this, player.team);
+        listViewTeam.setAdapter(teamAdapter);
 
     }
 
