@@ -15,7 +15,7 @@ import java.util.Map;
 public class ItemsGenerator {
 
     private static final Map<String, String> nachoPotionMap = new HashMap<String, String>(){{ put("name", "nachopotion"); put("points", "5"); put("type", "Health"); }};
-    private static final Map<String, String> nachoDefMap = new HashMap<String, String>(){{ put("name", "nachodef"); put("points", "2"); put("type", "Def"); }};
+    private static final Map<String, String> nachoDefMap = new HashMap<String, String>(){{ put("name", "upgradedef"); put("points", "2"); put("type", "Def"); }};
     private static final Map<String, String> upgradeFireMap = new HashMap<String, String>(){{ put("name", "upgradefire"); put("points", "1"); put("type", "Fire"); }};
     private static final Map<String, String> upgradeRockMap = new HashMap<String, String>(){{ put("name", "upgraderock"); put("points", "1");  put("type", "Rock");}};
     private static final Map<String, String> upgradeElectricMap = new HashMap<String, String>(){{ put("name", "upgradeelectric"); put("points", "1"); put("type", "Electric"); }};
