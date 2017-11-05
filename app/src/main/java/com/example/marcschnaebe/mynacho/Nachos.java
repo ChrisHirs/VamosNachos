@@ -57,6 +57,25 @@ public class Nachos {
 
     }
 
+    public Nachos(LatLng _position, String _name, String _type, int _level, int _xpCurrent,
+                  int _xpMax, int _ap, int _hpCurrent, int _hpMax, int _hpBonus, int _apBonus) {
+        position = _position;
+
+        name = _name;
+        type = _type;
+
+        level = _level;
+        xpCurrent = _xpCurrent;
+        xpMax = _xpMax;
+
+        ap = _ap;
+        hpCurrent = _hpCurrent;
+        hpMax = _hpMax;
+
+        hpBonus = _hpBonus;
+        apBonus = _apBonus;
+    }
+
     /* -------  Methods ------- */
 
     public void leveledUp () {

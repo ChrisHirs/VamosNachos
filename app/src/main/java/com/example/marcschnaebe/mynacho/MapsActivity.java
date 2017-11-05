@@ -3,6 +3,7 @@ package com.example.marcschnaebe.mynacho;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.marcschnaebe.util.JaxParser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -49,10 +51,33 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import static android.provider.Telephony.Mms.Part.FILENAME;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -157,8 +182,6 @@ public class MapsActivity extends FragmentActivity implements
             .setInterval(2000)
             .setFastestInterval(1000)
             .setSmallestDisplacement(0);
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -271,11 +294,27 @@ public class MapsActivity extends FragmentActivity implements
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
 
+        //Obtention du fichier XML de la team
+        File file = new File(getApplicationContext().getFilesDir(), "team");
+        //Remplissage de l'équipe avec les Nachomons du joueur si le fichier existe
+        if (file.exists() && file.length() != 0) {
+            try {
+                InputStream inputStream = new FileInputStream(file);
+                //Parseur du fichier XML
+                JaxParser parser = new JaxParser(inputStream);
+                //Affectation de la liste crée par le parseur XML
+                player.team = parser.getNachos();
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        //Sinon on initialise une nouvelle team
+        else {
+            player.initTeam();
+        }
 
-
-
-        //Remplissage de l'équipe avec les Nachomons du joueur
-        player.initTeam();
+        //Le viewFlipper
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
@@ -518,6 +557,75 @@ public class MapsActivity extends FragmentActivity implements
         //Arrêt des listener de Sensors
         mSensorManager.unregisterListener(this);
 
+        //String du XML
+        String string = "";
+
+        //Ecriture du XML
+        //TODO: mettre ce magnifique try-catch dans une méthode... peut-être
+        try
+        {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document doc = documentBuilder.newDocument();
+            doc.setXmlStandalone(true);
+
+            Element root = doc.createElement("nachomons");
+            doc.appendChild(root);
+
+            //Pour chaque nachos dans la liste...
+            for (Nachos n : player.team)
+            {
+                //Ajout de l'élément nachos
+                Element nachos = doc.createElement("nachos");
+
+                //Ajout des attributs du nachos
+                nachos.setAttribute("type", n.getType());
+                nachos.setAttribute("level", Integer.toString(n.getLevel()));
+                nachos.setAttribute("xpCurrent", Integer.toString(n.getXpCurrent()));
+                nachos.setAttribute("xpMax", Integer.toString(n.getXpMax()));
+                nachos.setAttribute("ap", Integer.toString(n.getAp()));
+                nachos.setAttribute("hpCurrent", Integer.toString(n.getHpCurrent()));
+                nachos.setAttribute("hpMax", Integer.toString(n.getHpMax()));
+                nachos.setAttribute("hpBonus", Integer.toString(n.getHpBonus()));
+                nachos.setAttribute("apBonus", Integer.toString(n.getApBonus()));
+                root.appendChild(nachos);
+
+                //Ajout de l'élément name
+                Element name = doc.createElement("name");
+                name.appendChild(doc.createTextNode(n.getName()));
+                nachos.appendChild(name);
+            }
+
+            //Affichage dans la console et écriture du XML dans la String s'il y a des nachos à écrire
+            if (!player.team.isEmpty())
+            {
+                Transformer tf = TransformerFactory.newInstance().newTransformer();
+                tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                tf.setOutputProperty(OutputKeys.INDENT, "yes");
+                tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+                Writer out = new StringWriter();
+                tf.transform(new DOMSource(doc), new StreamResult(out));
+
+                //Affichage dans la console
+                Log.d("xml", out.toString());
+
+                //Ecriture du string
+                string = out.toString();
+            }
+
+
+            //Ecriture du XML dans le fichier
+            FileOutputStream outputStream;
+
+            outputStream = openFileOutput("team", Context.MODE_PRIVATE);
+            outputStream.write(string.getBytes());
+            outputStream.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
