@@ -22,6 +22,7 @@ public class NachosGenerator {
 
     /* -------  Consts  ------ */
 
+    public static long generationTimer = System.currentTimeMillis() + 5000L;
     private static final Map<String, String> caraponchoMap = new HashMap<String, String>(){{ put("name", "Caraponcho"); put("type", "Water"); put("health-points", "10"); put("attack-points", "2"); }};
     private static final Map<String, String> salamuchosMap = new HashMap<String, String>(){{ put("name", "Salamuchos"); put("type", "Fire"); put("health-points", "10"); put("attack-points", "3"); }};
     private static final Map<String, String> buritopsMap = new HashMap<String, String>(){{ put("name", "Buritops"); put("type", "Rock"); put("health-points", "10"); put("attack-points", "1"); }};
@@ -73,6 +74,10 @@ public class NachosGenerator {
         String type = mapNachos.get("type");
         int hp = Integer.parseInt(mapNachos.get("health-points"));
         int ap = Integer.parseInt(mapNachos.get("attack-points"));
+
+        //Timer avant la prochaine génération
+        long millis = (long) Util.randomInteger(45, 75) * 1000; //De 45 sec. à 1 minute
+        generationTimer = System.currentTimeMillis() + millis;
 
         return new Nachos(latitude, longitude, name, type, hp, ap, level);
 

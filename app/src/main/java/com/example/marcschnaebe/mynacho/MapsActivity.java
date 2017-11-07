@@ -13,6 +13,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -883,13 +884,16 @@ public class MapsActivity extends FragmentActivity implements
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
         //Création de nouveaux Nachomons et d'Items
-        Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
-        Marker mNachos = placeMarker(newNachos);
-        mapMarker.put(mNachos, newNachos);
+        Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
+        if (System.currentTimeMillis() > NachosGenerator.generationTimer) {
+            Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
+            Marker mNachos = placeMarker(newNachos);
+            mapMarker.put(mNachos, newNachos);
 
-        Item newItem =  ItemsGenerator.addNewItem(myPositionMarker);
-        Marker mItem = placeItemMarker(newItem);
-        mapMarkerItems.put(mItem, newItem);
+            Item newItem = ItemsGenerator.addNewItem(myPositionMarker);
+            Marker mItem = placeItemMarker(newItem);
+            mapMarkerItems.put(mItem, newItem);
+        }
     }
 
 

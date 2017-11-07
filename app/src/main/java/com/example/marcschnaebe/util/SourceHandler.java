@@ -1,6 +1,5 @@
 package com.example.marcschnaebe.util;
 
-import android.util.Log;
 
 import com.example.marcschnaebe.mynacho.Nachos;
 
@@ -10,7 +9,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 
-import static android.R.id.list;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -57,7 +55,6 @@ public class SourceHandler extends DefaultHandler {
     public void startDocument() throws SAXException
     {
         super.startDocument();
-        //System.out.println("Start of the document");
     }
 
     @Override

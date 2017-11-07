@@ -7,7 +7,6 @@ import com.example.marcschnaebe.mynacho.Nachos;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
