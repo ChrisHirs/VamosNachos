@@ -328,18 +328,22 @@ public class MapsActivity extends FragmentActivity implements
         buttonBag.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int j=0;
+
+               if(!items.isEmpty()){
+                   int itemId=0;
+                   for(int l=0; l<10; l++){
+                       for(int k=0; k<5; k++ ){
+                           row.get(l).removeView(items.get(itemId));
+                           itemId++;
+                       }
+                       layoutBag.removeView(row.get(l));
+                   }
+                   for (int k = 0; k<player.getMaxBagSize()/5;k++){
+                       layoutBag.removeView(row.get(k));
+                   }
+               }
+
                 if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
-                    int itemId=0;
-                    for(int l=0; l<10; l++){
-                        for(int k=0; k<5; k++ ){
-                            row.get(l).removeView(items.get(itemId));
-                            itemId++;
-                        }
-                        layoutBag.removeView(row.get(l));
-                    }
-                    for (int k = 0; k<player.getMaxBagSize()/5;k++){
-                        layoutBag.removeView(row.get(k));
-                    }
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                 }
                 else{
@@ -351,7 +355,7 @@ public class MapsActivity extends FragmentActivity implements
                         for(int k=0; k<5; k++ ){
                             row.get(l).setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
                             items.add(new ImageButton(v.getContext()));
-                            //items.get(itemId).setImageResource(getResources().getIdentifier("noitem", "drawable", getPackageName()));
+                            items.get(itemId).setVisibility(TableLayout.INVISIBLE);
                             row.get(l).addView(items.get(itemId));
                             itemId++;
                         }
@@ -363,6 +367,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     for(int i=0; i < player.bag.size(); i++){
                         items.get(i).setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
+                        items.get(i).setVisibility(TableLayout.VISIBLE);
                     }
                     for (j=0; j<items.size(); j++){
                         Log.d("bag"," bag size: " + player.bag.size() + " items size: " + items.size());
@@ -490,19 +495,6 @@ public class MapsActivity extends FragmentActivity implements
                         }
 
                         chosenItem = null;
-
-                        //TODO: mettre dans methode pas dry utilisé plus haut aussi.
-                        int itemId = 0;
-                        for (int l = 0; l < 10; l++) {
-                            for (int k = 0; k < 5; k++) {
-                                row.get(l).removeView(items.get(itemId));
-                                itemId++;
-                            }
-                            layoutBag.removeView(row.get(l));
-                        }
-                        for (int k = 0; k < player.getMaxBagSize() / 5; k++) {
-                            layoutBag.removeView(row.get(k));
-                        }
                         viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                     }
 
