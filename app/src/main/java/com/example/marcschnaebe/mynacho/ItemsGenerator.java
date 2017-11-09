@@ -14,14 +14,14 @@ import java.util.Map;
 
 public class ItemsGenerator {
 
-    private static final Map<String, String> nachoPotionMap = new HashMap<String, String>(){{ put("name", "nachopotion"); put("points", "5"); put("type", "Health"); }};
-    private static final Map<String, String> nachoDefMap = new HashMap<String, String>(){{ put("name", "upgradedef"); put("points", "5"); put("type", "Def"); }};
-    private static final Map<String, String> upgradeFireMap = new HashMap<String, String>(){{ put("name", "upgradefire"); put("points", "2"); put("type", "Fire"); }};
-    private static final Map<String, String> upgradeRockMap = new HashMap<String, String>(){{ put("name", "upgraderock"); put("points", "2");  put("type", "Rock");}};
-    private static final Map<String, String> upgradeElectricMap = new HashMap<String, String>(){{ put("name", "upgradeelectric"); put("points", "2"); put("type", "Electric"); }};
-    private static final Map<String, String> upgradeGrassMap = new HashMap<String, String>(){{ put("name", "upgradegrass"); put("points", "2");  put("type", "Grass"); }};
-    private static final Map<String, String> upgradeGroundMap = new HashMap<String, String>(){{ put("name", "upgradeground"); put("points", "2");  put("type", "Ground"); }};
-    private static final Map<String, String> upgradeWaterMap = new HashMap<String, String>(){{ put("name", "upgradewater"); put("points", "2"); put("type", "Water"); }};
+    private static final Map<String, String> nachoPotionMap = new HashMap<String, String>(){{ put("name", "Nachopotion"); put("points", "5"); put("type", "Health"); }};
+    private static final Map<String, String> nachoDefMap = new HashMap<String, String>(){{ put("name", "UpgradeDEF"); put("points", "5"); put("type", "Def"); }};
+    private static final Map<String, String> upgradeFireMap = new HashMap<String, String>(){{ put("name", "UpgradeFire"); put("points", "2"); put("type", "Fire"); }};
+    private static final Map<String, String> upgradeRockMap = new HashMap<String, String>(){{ put("name", "UpgradeRock"); put("points", "2");  put("type", "Rock");}};
+    private static final Map<String, String> upgradeElectricMap = new HashMap<String, String>(){{ put("name", "UpgradeElectric"); put("points", "2"); put("type", "Electric"); }};
+    private static final Map<String, String> upgradeGrassMap = new HashMap<String, String>(){{ put("name", "UpgradeGrass"); put("points", "2");  put("type", "Grass"); }};
+    private static final Map<String, String> upgradeGroundMap = new HashMap<String, String>(){{ put("name", "UpgradeGround"); put("points", "2");  put("type", "Ground"); }};
+    private static final Map<String, String> upgradeWaterMap = new HashMap<String, String>(){{ put("name", "UpgradeWater"); put("points", "2"); put("type", "Water"); }};
 
     public static ArrayList<Map> itemList = new ArrayList<Map>(){{
         add(nachoPotionMap);

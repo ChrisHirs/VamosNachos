@@ -13,7 +13,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -55,13 +54,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -71,14 +67,12 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import static android.provider.Telephony.Mms.Part.FILENAME;
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
 
@@ -295,8 +289,8 @@ public class MapsActivity extends FragmentActivity implements
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
 
-        //Obtention du fichier XML de la team
-        File file = new File(getApplicationContext().getFilesDir(), "team");
+        //Obtention du fichier XML de la team et des items
+        File file = new File(getApplicationContext().getFilesDir(), "objects");
         //Remplissage de l'équipe avec les Nachomons du joueur si le fichier existe
         if (file.exists() && file.length() != 0) {
             try {
@@ -304,7 +298,15 @@ public class MapsActivity extends FragmentActivity implements
                 //Parseur du fichier XML
                 JaxParser parser = new JaxParser(inputStream);
                 //Affectation de la liste crée par le parseur XML
-                player.team = parser.getNachos();
+                ArrayList<Object> objectsFromParser = parser.getObjects();
+                for (Object obj : objectsFromParser) {
+                    if (obj.getClass() == Nachos.class) {
+                        player.team.add((Nachos) obj);
+                    }
+                    else if (obj.getClass() == Item.class) {
+                        player.bag.add((Item) obj);
+                    }
+                }
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -312,6 +314,7 @@ public class MapsActivity extends FragmentActivity implements
         }
         //Sinon on initialise une nouvelle team
         else {
+            //TODO: changer l'initialisation de la team
             player.initTeam();
         }
 
@@ -379,9 +382,11 @@ public class MapsActivity extends FragmentActivity implements
                                 Log.d("bag", "item: "+items.get(index).toString()+ " bag size: " + player.bag.size() + " items size: " + items.size());
                                 if(player.bag.size()>0){
                                     chosenItem = player.bag.get(index);
+                                    isCapturing = isDeathMatching = false;
+                                    player.setTarget(null);
 
                                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
-                                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to applie item!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to apply item!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -453,6 +458,7 @@ public class MapsActivity extends FragmentActivity implements
                 public void onClick(View view) {
                     //Capture
                     if (player.getTarget() != null && isCapturing) {
+                        chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
                         if (chosenNachos.isWinner(player.getTarget())) {
                             player.getTarget().setHpCurrent(0);
@@ -466,6 +472,7 @@ public class MapsActivity extends FragmentActivity implements
 
                     //Deathmatch
                     if (player.getTarget() != null && isDeathMatching) {
+                        chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
                         if (chosenNachos.isWinner(player.getTarget())) {
                             chosenNachos.addToCurrentXp(5);
@@ -478,16 +485,16 @@ public class MapsActivity extends FragmentActivity implements
 
                     //Items
                     if (chosenItem != null) {
-                        if (chosenItem.getType() == "Health"){
+                        if (chosenItem.getType().equals("Health")){
                             player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
                             player.bag.remove(chosenItem);
                         }
-                        else if (chosenItem.getType() == "Def") {
+                        else if (chosenItem.getType().equals("Def")) {
                             player.team.get(index).addDef(chosenItem.getUpgradePoints());
                             player.bag.remove(chosenItem);
                         }
                         else{
-                            if(chosenItem.getType()== player.team.get(index).getType()){
+                            if(chosenItem.getType().equals(player.team.get(index).getType())){
                                 player.team.get(index).addAttack(chosenItem.getUpgradePoints());
                                 Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
@@ -563,7 +570,7 @@ public class MapsActivity extends FragmentActivity implements
             Document doc = documentBuilder.newDocument();
             doc.setXmlStandalone(true);
 
-            Element root = doc.createElement("nachomons");
+            Element root = doc.createElement("objects");
             doc.appendChild(root);
 
             //Pour chaque nachos dans la liste...
@@ -574,6 +581,7 @@ public class MapsActivity extends FragmentActivity implements
 
                 //Ajout des attributs du nachos
                 nachos.setAttribute("type", n.getType());
+                nachos.setAttribute("name", n.getName());
                 nachos.setAttribute("level", Integer.toString(n.getLevel()));
                 nachos.setAttribute("xpCurrent", Integer.toString(n.getXpCurrent()));
                 nachos.setAttribute("xpMax", Integer.toString(n.getXpMax()));
@@ -583,11 +591,19 @@ public class MapsActivity extends FragmentActivity implements
                 nachos.setAttribute("hpBonus", Integer.toString(n.getHpBonus()));
                 nachos.setAttribute("apBonus", Integer.toString(n.getApBonus()));
                 root.appendChild(nachos);
+            }
 
-                //Ajout de l'élément name
-                Element name = doc.createElement("name");
-                name.appendChild(doc.createTextNode(n.getName()));
-                nachos.appendChild(name);
+            //Pour chaque items dans la liste...
+            for (Item i : player.bag)
+            {
+                //Ajout de l'élément item
+                Element item = doc.createElement("item");
+
+                //Ajout des attributs du nachos
+                item.setAttribute("type", i.getType());
+                item.setAttribute("name", i.getName());
+                item.setAttribute("up", Integer.toString(i.getUpgradePoints()));
+                root.appendChild(item);
             }
 
             //Affichage dans la console et écriture du XML dans la String s'il y a des nachos à écrire
@@ -612,7 +628,7 @@ public class MapsActivity extends FragmentActivity implements
             //Ecriture du XML dans le fichier
             FileOutputStream outputStream;
 
-            outputStream = openFileOutput("team", Context.MODE_PRIVATE);
+            outputStream = openFileOutput("objects", Context.MODE_PRIVATE);
             outputStream.write(string.getBytes());
             outputStream.close();
         }

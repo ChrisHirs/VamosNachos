@@ -7,21 +7,29 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class Item {
-    private LatLng position;
 
+    private LatLng position;
     private String name;
     private String type;
-
     private int upgradePoints;
 
-    public Item(double latitude, double longitude, String _name, int upgradePoints, String type) {
+    public Item(double latitude, double longitude, String _name, int _upgradePoints, String _type) {
 
         position = new LatLng(latitude, longitude);
         name = _name;
-        this.upgradePoints = upgradePoints;
-        this.type=type;
+        upgradePoints = _upgradePoints;
+        type = _type;
+
     }
 
+    public Item (LatLng _position, String _name, String _type, int _upgradePoints) {
+
+        position = _position;
+        name = _name;
+        upgradePoints = _upgradePoints;
+        type = _type;
+
+    }
 
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
 

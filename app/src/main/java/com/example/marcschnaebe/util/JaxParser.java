@@ -2,8 +2,6 @@ package com.example.marcschnaebe.util;
 
 import android.util.Log;
 
-import com.example.marcschnaebe.mynacho.Nachos;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -18,7 +16,7 @@ import javax.xml.parsers.SAXParserFactory;
  */
 
 public class JaxParser {
-    ArrayList<Nachos> listNachos = new ArrayList<>();
+    ArrayList<Object> listObjects = new ArrayList<>();
 
     public JaxParser(InputStream stream)
     {
@@ -27,7 +25,7 @@ public class JaxParser {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
-            SourceHandler sourceHandler = new SourceHandler(listNachos);
+            SourceHandler sourceHandler = new SourceHandler(listObjects);
 
             xmlReader.setContentHandler(sourceHandler);
             InputSource source = new InputSource(stream);
@@ -41,8 +39,8 @@ public class JaxParser {
     }
 
     //Retourne la liste des nachos
-    public ArrayList<Nachos> getNachos()
+    public ArrayList<Object> getObjects()
     {
-        return listNachos;
+        return listObjects;
     }
 }

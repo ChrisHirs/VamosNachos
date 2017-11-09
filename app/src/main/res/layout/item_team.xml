@@ -60,6 +60,7 @@
                             android:layout_weight="1"
                             android:text="Nacho's name"
                             android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                            android:textColor="@color/common_google_signin_btn_text_dark_default"
                             android:textSize="12sp" />
 
                         <LinearLayout
@@ -74,14 +75,17 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="ATK : "
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold" />
+
                             <TextView
                                 android:id="@+id/textViewAtkValue"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="\??"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp" />
 
 
@@ -91,8 +95,9 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="DEF : "
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textViewDefValue"
@@ -100,6 +105,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="\??"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp" />
 
                         </LinearLayout>
@@ -126,14 +132,17 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="LVL : "
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:id="@+id/textViewLevelValue"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="\??"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp" />
 
                         </LinearLayout>
@@ -150,14 +159,17 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="TYPE : "
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold" />
+
                             <TextView
                                 android:id="@+id/textViewTypeValue"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:text="\????"
+                                android:textColor="@color/common_google_signin_btn_text_dark_default"
                                 android:textSize="10sp" />
 
                         </LinearLayout>

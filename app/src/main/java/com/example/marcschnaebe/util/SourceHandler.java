@@ -2,6 +2,7 @@ package com.example.marcschnaebe.util;
 
 
 import com.example.marcschnaebe.mynacho.Nachos;
+import com.example.marcschnaebe.mynacho.Item;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -9,6 +10,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 
+import static android.R.attr.level;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -16,33 +18,24 @@ import static java.lang.Integer.parseInt;
  */
 
 public class SourceHandler extends DefaultHandler {
-    ArrayList<Nachos> listNachos = new ArrayList<>();
+    ArrayList<Object> listObjects = new ArrayList<>();
 
-    boolean bNachosName = false;
-
-    public SourceHandler(ArrayList<Nachos> nachos)
+    public SourceHandler(ArrayList<Object> nachos)
     {
-        this.listNachos = nachos;
+        this.listObjects = nachos;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        if (bNachosName)
-        {
-            bNachosName = false;
 
-            Nachos n = listNachos.get(listNachos.size() - 1);
-            String name = new String(ch, start, length);
-            n.setName(name);
-        }
     }
 
     @Override
     public void endDocument() throws SAXException
     {
         super.endDocument();
-        //Log.d("read", "end of document :  " + listNachos.toString());
+        //Log.d("read", "end of document :  " + listObjects.toString());
     }
 
     @Override
@@ -64,6 +57,7 @@ public class SourceHandler extends DefaultHandler {
         if (qName.equalsIgnoreCase("nachos"))
         {
             String type = attributes.getValue("type");
+            String name = attributes.getValue("name");
 
             int level = parseInt(attributes.getValue("level"));
             int xpCurrent = parseInt(attributes.getValue("xpCurrent"));
@@ -76,12 +70,18 @@ public class SourceHandler extends DefaultHandler {
             int hpBonus = parseInt(attributes.getValue("hpBonus"));
             int apBonus = Integer.parseInt(attributes.getValue("apBonus"));
 
-            Nachos nachos = new Nachos(null, "", type, level, xpCurrent, xpMax, ap, hpCurrent, hpMax, hpBonus, apBonus);
-            listNachos.add(nachos);
+            Nachos nachos = new Nachos(null, name, type, level, xpCurrent, xpMax, ap, hpCurrent, hpMax, hpBonus, apBonus);
+            listObjects.add(nachos);
         }
-        else if (qName.equalsIgnoreCase("name"))
+        else if (qName.equalsIgnoreCase("item"))
         {
-            bNachosName = true;
+            String type = attributes.getValue("type");
+            String name = attributes.getValue("name");
+
+            int upgradePoints = parseInt(attributes.getValue("up"));
+
+            Item item = new Item(null, name, type, upgradePoints);
+            listObjects.add(item);
         }
     }
 }
