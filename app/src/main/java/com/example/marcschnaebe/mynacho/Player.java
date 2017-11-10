@@ -34,7 +34,7 @@ public class Player {
      /* -------  Methods ------- */
 
     public void initTeam(){
-        for (int i = 0 ; i < 1; i++){
+        for (int i = 0 ; i < 4; i++){
             team.add(i, NachosGenerator.addNewWildNachos(marker, getMeanLevelTeam()));
         }
     }

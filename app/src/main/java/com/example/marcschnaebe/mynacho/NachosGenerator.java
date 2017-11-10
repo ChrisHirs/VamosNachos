@@ -76,7 +76,7 @@ public class NachosGenerator {
         int ap = Integer.parseInt(mapNachos.get("attack-points"));
 
         //Timer avant la prochaine génération
-        long millis = (long) Util.randomInteger(25, 45) * 1000; //Entre 25 sec. à 45 sec.
+        long millis = (long) Util.randomInteger(5, 8) * 1000; //Entre 25 sec. à 45 sec.
         generationTimer = System.currentTimeMillis() + millis;
 
         return new Nachos(latitude, longitude, name, type, hp, ap, level);

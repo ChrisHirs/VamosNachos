@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gridViewBag"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:paddingTop="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp"
+    android:columnWidth="90dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="10dp"
+    android:horizontalSpacing="10dp"
+    android:stretchMode="columnWidth"
+    android:gravity="center"/>
 
-    <TableLayout
-        android:id="@+id/layoutBag"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:shrinkColumns="true"
-        android:stretchColumns="true"
-        android:visibility="visible"
-        android:background="@color/colorPrimary"
-        ></TableLayout>
-</LinearLayout>
 
 

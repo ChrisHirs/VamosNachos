@@ -19,13 +19,13 @@ import java.util.List;
  * Created by anthony.fleury on 27.10.2017.
  */
 
-public class MyCustomAdapter extends BaseAdapter {
+public class TeamAdapter extends BaseAdapter {
 
     private ArrayList<Nachos> mData = new ArrayList<Nachos>();
     private LayoutInflater mInflater;
     private Context context;
 
-    public MyCustomAdapter(Context _context, ArrayList<Nachos> list) {
+    public TeamAdapter(Context _context, ArrayList<Nachos> list) {
         context = _context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mData = list;

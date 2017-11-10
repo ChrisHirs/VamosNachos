@@ -17,16 +17,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -137,12 +136,9 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView imageItemsInfo;
     private LinearLayout layoutItemsInfo;
 
-    private TableLayout layoutBag;
     private ImageButton buttonBag;
 
     Item chosenItem=null;
-    final private ArrayList<ImageButton> items = new ArrayList<>();
-    private ArrayList<TableRow> row = new ArrayList<>();
 
     //Nachos
     private Button buttonDeath;
@@ -155,15 +151,14 @@ public class MapsActivity extends FragmentActivity implements
 
     private ViewFlipper viewFlipper;
     private ListView listViewTeam;
-    private MyCustomAdapter teamAdapter;
+    private TeamAdapter teamAdapter;
+
+    private GridView gridViewBag;
+    private BagAdapter bagAdapter;
 
     private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
 
     private ArrayList<ProgressBar> progressBarListBottomTeamNachos = new ArrayList<>();
-
-    private ArrayList<ImageButton> buttonListUpperTeamNachos = new ArrayList<>();
-
-    private ArrayList<ProgressBar> progressBarListUpperTeamNachos = new ArrayList<>();
 
     //Items
     private HashMap<Marker, Item> mapMarkerItems = new HashMap<Marker, Item>();
@@ -250,7 +245,6 @@ public class MapsActivity extends FragmentActivity implements
         textItemsInfo = (TextView) findViewById(R.id.textItemsInfo);
         imageItemsInfo = (ImageView) findViewById(R.id.imageItemsInfo);
 
-        layoutBag = (TableLayout) findViewById(R.id.layoutBag);
         buttonBag = (ImageButton) findViewById(R.id.imageButtonBag);
 
         //Nachos
@@ -321,77 +315,20 @@ public class MapsActivity extends FragmentActivity implements
         //Le viewFlipper
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
+        viewFlipper.setInAnimation(this, R.anim.view_transition_in_bottom);
+        viewFlipper.setOutAnimation(this, R.anim.view_transition_out_bottom);
+
         //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
         updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
 
-        //Création du layout pour le bag
-        final TableLayout.LayoutParams tableParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 550, getResources().getDisplayMetrics()), 1f);
-        final TableLayout.LayoutParams rowParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.FILL_PARENT, TableLayout.LayoutParams.FILL_PARENT, 1f);
-
+        //Bouton du sac
         buttonBag.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                int j=0;
-
-               if(!items.isEmpty()){
-                   int itemId=0;
-                   for(int l=0; l<10; l++){
-                       for(int k=0; k<5; k++ ){
-                           row.get(l).removeView(items.get(itemId));
-                           itemId++;
-                       }
-                       layoutBag.removeView(row.get(l));
-                   }
-                   for (int k = 0; k<player.getMaxBagSize()/5;k++){
-                       layoutBag.removeView(row.get(k));
-                   }
-               }
 
                 if(viewFlipper.getCurrentView() == findViewById(R.id.layout_bag)){
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                 }
                 else{
-                    int itemId=0;
-                    items.clear();
-
-                    for(int l=0; l<10; l++){
-                        row.add(new TableRow(v.getContext()));
-                        for(int k=0; k<5; k++ ){
-                            row.get(l).setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT));
-                            items.add(new ImageButton(v.getContext()));
-                            items.get(itemId).setVisibility(TableLayout.INVISIBLE);
-                            row.get(l).addView(items.get(itemId));
-                            itemId++;
-                        }
-                        row.get(l).setLayoutParams(rowParams);
-                        layoutBag.addView(row.get(l));
-                        layoutBag.setShrinkAllColumns(true);
-                        layoutBag.setStretchAllColumns(true);
-                        layoutBag.setLayoutParams(tableParams);
-                    }
-                    for(int i=0; i < player.bag.size(); i++){
-                        items.get(i).setImageResource(getResources().getIdentifier(player.bag.get(i).getName().toLowerCase(), "drawable", getPackageName()));
-                        items.get(i).setVisibility(TableLayout.VISIBLE);
-                    }
-                    for (j=0; j<items.size(); j++){
-                        Log.d("bag"," bag size: " + player.bag.size() + " items size: " + items.size());
-                        final int index = j;
-                        ImageButton button = items.get(j);
-                        button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Log.d("bag", "item: "+items.get(index).toString()+ " bag size: " + player.bag.size() + " items size: " + items.size());
-                                if(player.bag.size()>0){
-                                    chosenItem = player.bag.get(index);
-                                    isCapturing = isDeathMatching = false;
-                                    player.setTarget(null);
-
-                                    viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
-                                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to apply item!", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-                    layoutBag.setVisibility(TableLayout.VISIBLE);
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_bag)));
                 }
             }
@@ -404,6 +341,8 @@ public class MapsActivity extends FragmentActivity implements
                     targetMarker.remove();
                     mapMarkerItems.remove(targetMarker);
                     layoutItemsInfo.setVisibility(LinearLayout.GONE);
+
+                    bagAdapter.notifyDataSetChanged();
                 }
 
                 for(int i=0; i<player.bag.size(); i++){
@@ -422,7 +361,6 @@ public class MapsActivity extends FragmentActivity implements
                 }
                 else{
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_team)));
-                    //updateDisplayInfoTeam(buttonListUpperTeamNachos, progressBarListUpperTeamNachos);
                 }
 
             }
@@ -502,7 +440,6 @@ public class MapsActivity extends FragmentActivity implements
                         }
 
                         chosenItem = null;
-                        viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                     }
 
                     if (player.getTarget() != null) {
@@ -512,7 +449,10 @@ public class MapsActivity extends FragmentActivity implements
                         layoutInfo.setVisibility(LinearLayout.GONE);
                     }
 
+                    //Mise à jour du sac et de la team
                     teamAdapter.notifyDataSetChanged();
+                    bagAdapter.notifyDataSetChanged();
+
                     updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
                 }
             });
@@ -523,9 +463,38 @@ public class MapsActivity extends FragmentActivity implements
         // ------------------------------
 
         ListView listViewTeam = (ListView) findViewById(R.id.layout_team);
+//
+//        TextView textView = new TextView(this);
+//        textView.setText("Hello. I'm a header view");
+//
+//        listViewTeam.addHeaderView(textView);
 
-        teamAdapter = new MyCustomAdapter(this, player.team);
+        teamAdapter = new TeamAdapter(this, player.team);
         listViewTeam.setAdapter(teamAdapter);
+
+        // ------------------------------
+        //       BAG LIST DISPLAY
+        // ------------------------------
+
+        gridViewBag = (GridView) findViewById(R.id.layout_bag);
+
+        bagAdapter = new BagAdapter(this, player.bag);
+        gridViewBag.setAdapter(bagAdapter);
+
+        gridViewBag.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("bag", "item: "+player.bag.get(i).toString()+ " bag size: " + player.bag.size() + " items size: " + player.bag.size());
+
+                chosenItem = player.bag.get(i);
+                isCapturing = isDeathMatching = false;
+                player.setTarget(null);
+
+                Toast.makeText(getApplicationContext(), "Choose a Nachomons to apply item!", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
     }
 
@@ -670,8 +639,6 @@ public class MapsActivity extends FragmentActivity implements
                     double endLongitude = nachosPosition.longitude;
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
 
-                    //TODO : Mise à jour sur le déplacement onlocchange
-
                     layoutItemsInfo.setVisibility(LinearLayout.GONE);
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
                     textInfo.setText("Name: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " LVL: " + nachos.getLevel());
@@ -724,7 +691,9 @@ public class MapsActivity extends FragmentActivity implements
                         buttonTake.setEnabled(false);
                     }
                 }
-                return false;
+
+                // Event was handled by our code do not launch default behaviour.
+                return true;
             }
         });
     }
