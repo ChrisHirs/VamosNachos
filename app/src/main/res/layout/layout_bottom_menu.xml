@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     android:layout_weight="4">
 
-
-
         <LinearLayout
             android:id="@+id/LayoutBottom"
             android:layout_width="match_parent"
@@ -13,7 +11,6 @@
             android:layout_weight="0.09"
             android:background="@color/colorPrimary"
             android:orientation="horizontal">
-
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -259,7 +256,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/bagos" />
 
-
         </LinearLayout>
+
     </LinearLayout>
 
