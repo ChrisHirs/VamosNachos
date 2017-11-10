@@ -51,9 +51,7 @@ public class Item {
         this.position = position;
     }
 
-    public int getUpgradePoints() {
-        return upgradePoints;
-    }
+    public int getUpgradePoints() { return upgradePoints; }
 
     public void setUpgradePoints(int upgradePoints) {
         this.upgradePoints = upgradePoints;

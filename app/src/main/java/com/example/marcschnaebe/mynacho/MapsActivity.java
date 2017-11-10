@@ -28,10 +28,10 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.marcschnaebe.util.JaxParser;
+import com.example.marcschnaebe.util.Util;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -386,7 +386,7 @@ public class MapsActivity extends FragmentActivity implements
                                     player.setTarget(null);
 
                                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
-                                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to apply item!", Toast.LENGTH_SHORT).show();
+                                    Util.showSnackBar("Choose a Nachomons to apply it!", getWindow().getDecorView().findViewById(android.R.id.content));
                                 }
                             }
                         });
@@ -433,7 +433,7 @@ public class MapsActivity extends FragmentActivity implements
                 if(player.team.size() < Player.getMaxTeamSize()){
                     isDeathMatching = false;
                     isCapturing = true;
-                    Toast.makeText(getApplicationContext(), "Choose a Nachomons to fight!", Toast.LENGTH_SHORT).show();
+                    Util.showSnackBar("Choose a Nachomon to fight it!", getWindow().getDecorView().findViewById(android.R.id.content));
                 }
             }
         });
@@ -443,7 +443,7 @@ public class MapsActivity extends FragmentActivity implements
             public void onClick(View view) {
                 isCapturing = false;
                 isDeathMatching = true;
-                Toast.makeText(getApplicationContext(), "Choose a Nachomons to fight!", Toast.LENGTH_SHORT).show();
+                Util.showSnackBar("Choose a Nachomon to fight it!", getWindow().getDecorView().findViewById(android.R.id.content));
             }
         });
 
@@ -486,18 +486,24 @@ public class MapsActivity extends FragmentActivity implements
                     //Items
                     if (chosenItem != null) {
                         if (chosenItem.getType().equals("Health")){
-                            player.team.get(index).addToCurrentHp(chosenItem.getUpgradePoints());
+                            player.team.get(index).healNachosToMax();
                             player.bag.remove(chosenItem);
+                            Util.showSnackBar(player.team.get(index).getName() + "'s health restored!", getWindow().getDecorView().findViewById(android.R.id.content));
                         }
                         else if (chosenItem.getType().equals("Def")) {
                             player.team.get(index).addDef(chosenItem.getUpgradePoints());
                             player.bag.remove(chosenItem);
+                            Util.showSnackBar(player.team.get(index).getName() + " is tougher!", getWindow().getDecorView().findViewById(android.R.id.content));
                         }
                         else{
                             if(chosenItem.getType().equals(player.team.get(index).getType())){
                                 player.team.get(index).addAttack(chosenItem.getUpgradePoints());
                                 Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
+                                Util.showSnackBar(player.team.get(index).getName() + " is stronger!", getWindow().getDecorView().findViewById(android.R.id.content));
+                            }
+                            else {
+                                Util.showSnackBar("This Nachomon type doesn't match the item!", getWindow().getDecorView().findViewById(android.R.id.content));
                             }
                         }
 
@@ -708,7 +714,7 @@ public class MapsActivity extends FragmentActivity implements
 
                     layoutInfo.setVisibility(LinearLayout.GONE);
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
-                    textItemsInfo.setText("Nom: " + items.getName() + " Points: " + items.getUpgradePoints() + " Type: " + items.getType());
+                    textItemsInfo.setText("Nom: " + items.getName() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
 
                     if (results[0] < 400) { //40

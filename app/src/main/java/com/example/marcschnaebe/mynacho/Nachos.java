@@ -1,7 +1,6 @@
 package com.example.marcschnaebe.mynacho;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.marcschnaebe.util.Util;
 import com.google.android.gms.maps.model.LatLng;
@@ -88,6 +87,10 @@ public class Nachos {
         hpMax += 5;
         hpCurrent = hpMax;
 
+    }
+
+    public void healNachosToMax() {
+        hpCurrent = hpMax;
     }
 
     public void addToCurrentHp(int hp){
