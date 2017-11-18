@@ -371,7 +371,7 @@ public class MapsActivity extends FragmentActivity implements
                 if(player.team.size() < Player.getMaxTeamSize()){
                     isDeathMatching = false;
                     isCapturing = true;
-                    Util.showSnackBar("Choose a Nachomon to fight it!", getWindow().getDecorView().findViewById(android.R.id.content));
+                    Util.showSnackBar("Choose a Nachomon to fight it!", findViewById(android.R.id.content));
                 }
             }
         });
@@ -381,7 +381,7 @@ public class MapsActivity extends FragmentActivity implements
             public void onClick(View view) {
                 isCapturing = false;
                 isDeathMatching = true;
-                Util.showSnackBar("Choose a Nachomon to fight it!", getWindow().getDecorView().findViewById(android.R.id.content));
+                Util.showSnackBar("Choose a Nachomon to fight it!", findViewById(android.R.id.content));
             }
         });
 
@@ -426,22 +426,22 @@ public class MapsActivity extends FragmentActivity implements
                         if (chosenItem.getType().equals("Health")){
                             player.team.get(index).healNachosToMax();
                             player.bag.remove(chosenItem);
-                            Util.showSnackBar(player.team.get(index).getName() + "'s health restored!", getWindow().getDecorView().findViewById(android.R.id.content));
+                            Util.showSnackBar(player.team.get(index).getName() + "'s health restored!", findViewById(android.R.id.content));
                         }
                         else if (chosenItem.getType().equals("Def")) {
                             player.team.get(index).addDef(chosenItem.getUpgradePoints());
                             player.bag.remove(chosenItem);
-                            Util.showSnackBar(player.team.get(index).getName() + " is tougher!", getWindow().getDecorView().findViewById(android.R.id.content));
+                            Util.showSnackBar(player.team.get(index).getName() + " is tougher!", findViewById(android.R.id.content));
                         }
                         else{
                             if(chosenItem.getType().equals(player.team.get(index).getType())){
                                 player.team.get(index).addAttack(chosenItem.getUpgradePoints());
                                 Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
-                                Util.showSnackBar(player.team.get(index).getName() + " is stronger!", getWindow().getDecorView().findViewById(android.R.id.content));
+                                Util.showSnackBar(player.team.get(index).getName() + " is stronger!", findViewById(android.R.id.content));
                             }
                             else {
-                                Util.showSnackBar("This Nachomon type doesn't match the item!", getWindow().getDecorView().findViewById(android.R.id.content));
+                                Util.showSnackBar("This Nachomon type doesn't match the item!", findViewById(android.R.id.content));
                             }
                         }
 
@@ -497,7 +497,7 @@ public class MapsActivity extends FragmentActivity implements
                 isCapturing = isDeathMatching = false;
                 player.setTarget(null);
 
-                Util.showSnackBar("Choose a Nachomons to apply it!", getWindow().getDecorView().findViewById(android.R.id.content));
+                Util.showSnackBar("Choose a Nachomons to apply it!", findViewById(android.R.id.content));
 
             }
         });

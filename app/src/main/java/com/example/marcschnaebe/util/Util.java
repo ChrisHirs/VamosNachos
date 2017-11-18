@@ -1,19 +1,15 @@
 package com.example.marcschnaebe.util;
 
 
-import android.graphics.Color;
 import android.os.Build;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.androidadvance.topsnackbar.TSnackbar;
 import com.example.marcschnaebe.mynacho.R;
 
 import java.util.Random;
@@ -50,21 +46,17 @@ public class Util {
     }
 
     public static void showSnackBar (String text, View view) {
-        //Obtention de la taille du layout du bas
-        int layoutBottomHeight = view.findViewById(R.id.layout_bottom_menu).getHeight();
+        //Obtention de la largeur du layout du bas
         int layoutBottomWidth = view.findViewById(R.id.layout_bottom_menu).getWidth();
 
-        //Création du snackbar
-        Snackbar snackBar = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+        //Création du snackbar avec la librairie TSnackbar
+        TSnackbar snackBar = TSnackbar.make(view, text, TSnackbar.LENGTH_LONG);
 
-        //Largeur du snackbar
-        View sView = snackBar.getView();
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) sView.getLayoutParams();
-        params.width = (int) layoutBottomWidth/3*2;
-        params.gravity = (Gravity.CENTER | Gravity.BOTTOM);
-        sView.setLayoutParams(params);
+        //largeur du snackbar
+        snackBar.setMaxWidth(layoutBottomWidth);
 
         //Couleur du snackbar
+        View sView = snackBar.getView();
         sView.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
 
         //Texte centré
@@ -73,7 +65,6 @@ public class Util {
             mainTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         else
             mainTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-        mainTextView.setGravity(Gravity.CENTER_HORIZONTAL);
 
         snackBar.show();
     }
