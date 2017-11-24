@@ -2,11 +2,9 @@ package com.example.marcschnaebe.util;
 
 
 import android.os.Build;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.androidadvance.topsnackbar.TSnackbar;
@@ -27,9 +25,10 @@ public class Util {
      * @param max nombre maximum
      * @return nombre aléatoire int
      */
+    static Random random = new Random(System.nanoTime());
+
     public static int randomInteger(int min, int max)
     {
-        Random random = new Random(System.nanoTime());
         return random.nextInt(max + 1 - min) + min;
     }
 
@@ -41,8 +40,7 @@ public class Util {
      * @return nombre aléatoire double
      */
     public static double randomDouble(double min, double max) {
-        Random random = new Random(System.nanoTime());
-        return min + (max - min) * random.nextDouble();
+        return min + random.nextDouble() * (max - min);
     }
 
     public static void showSnackBar (String text, View view) {

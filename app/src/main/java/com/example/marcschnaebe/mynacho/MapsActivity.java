@@ -423,22 +423,29 @@ public class MapsActivity extends FragmentActivity implements
 
                     //Items
                     if (chosenItem != null) {
+                        Nachos nacho = player.team.get(index);
+
                         if (chosenItem.getType().equals("Health")){
-                            player.team.get(index).healNachosToMax();
-                            player.bag.remove(chosenItem);
-                            Util.showSnackBar(player.team.get(index).getName() + "'s health restored!", findViewById(android.R.id.content));
+                            if (nacho.getHpCurrent() != nacho.getHpMax()) {
+                                nacho.healNachosToMax();
+                                player.bag.remove(chosenItem);
+                                Util.showSnackBar(nacho.getName() + "'s health restored!", findViewById(android.R.id.content));
+                            }
+                            else {
+                                Util.showSnackBar(nacho.getName() + " is already fine!", findViewById(android.R.id.content));
+                            }
                         }
                         else if (chosenItem.getType().equals("Def")) {
-                            player.team.get(index).addDef(chosenItem.getUpgradePoints());
+                            nacho.addDef(chosenItem.getUpgradePoints());
                             player.bag.remove(chosenItem);
-                            Util.showSnackBar(player.team.get(index).getName() + " is tougher!", findViewById(android.R.id.content));
+                            Util.showSnackBar(nacho.getName() + " is tougher!", findViewById(android.R.id.content));
                         }
                         else{
-                            if(chosenItem.getType().equals(player.team.get(index).getType())){
-                                player.team.get(index).addAttack(chosenItem.getUpgradePoints());
+                            if(chosenItem.getType().equals(nacho.getType())){
+                                nacho.addAttack(chosenItem.getUpgradePoints());
                                 Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
-                                Util.showSnackBar(player.team.get(index).getName() + " is stronger!", findViewById(android.R.id.content));
+                                Util.showSnackBar(nacho.getName() + " is stronger!", findViewById(android.R.id.content));
                             }
                             else {
                                 Util.showSnackBar("This Nachomon type doesn't match the item!", findViewById(android.R.id.content));
