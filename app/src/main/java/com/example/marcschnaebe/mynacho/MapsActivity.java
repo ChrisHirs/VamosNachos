@@ -631,6 +631,15 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setLocationSource(this);
         mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                // Cache les infos du marqueur lorsque l'on clique ailleurs sur la map
+                layoutInfo.setVisibility(LinearLayout.GONE);
+                layoutItemsInfo.setVisibility(LinearLayout.GONE);
+            }
+        });
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
