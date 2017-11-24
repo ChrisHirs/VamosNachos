@@ -415,7 +415,9 @@ public class MapsActivity extends FragmentActivity implements
                         chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
                         if (chosenNachos.fightToDeathWith(player.getTarget())) {
-                            chosenNachos.addToCurrentXp(chosenNachos.calcWinnableExperience(player.getTarget()));
+                            if (chosenNachos.addToCurrentXp(chosenNachos.calcWinnableExperience(player.getTarget()))) {
+                                Util.showSnackBar(chosenNachos.getName() + "'s leveled up!", findViewById(android.R.id.content));
+                            }
                         }
                         else {
                             player.team.remove(chosenNachos);

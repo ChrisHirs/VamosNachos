@@ -101,7 +101,7 @@ public class Nachos {
         }
     }
 
-    public void addToCurrentXp(int xp) {
+    public boolean addToCurrentXp(int xp) {
         xpCurrent += xp;
         if (xpCurrent >= xpMax) {
             int xpOverflow = xpCurrent - xpMax;
@@ -109,8 +109,9 @@ public class Nachos {
             if(xpOverflow > 0){
                 this.addToCurrentXp(xpOverflow);
             }
-
+            return true;
         }
+        return false;
     }
 
     public void addDef(int upgrade) {
