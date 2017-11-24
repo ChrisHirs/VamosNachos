@@ -62,7 +62,9 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -888,10 +890,35 @@ public class MapsActivity extends FragmentActivity implements
             Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
             Marker mNachos = placeMarker(newNachos);
             mapMarker.put(mNachos, newNachos);
-
             Item newItem = ItemsGenerator.addNewItem(myPositionMarker);
             Marker mItem = placeItemMarker(newItem);
             mapMarkerItems.put(mItem, newItem);
+
+            //Vérification des timeout des nachos déjà présents
+            for (Iterator<Map.Entry<Marker, Nachos>> iterator = mapMarker.entrySet().iterator(); iterator.hasNext(); )
+            {
+                Map.Entry<Marker, Nachos> entry = iterator.next();
+                Marker currentMarker = entry.getKey();
+                Nachos currentNacho = (Nachos) entry.getValue();
+                if (currentNacho.createdTime < (System.currentTimeMillis() - 600000)) { // 10 minutes = 600000 ms
+                    iterator.remove();
+                    currentMarker.remove();
+                    mapMarker.remove(currentMarker);
+                }
+            }
+
+            //Vérification des timeout des items déjà présents
+            for (Iterator<Map.Entry<Marker, Item>> iterator = mapMarkerItems.entrySet().iterator(); iterator.hasNext(); )
+            {
+                Map.Entry<Marker, Item> entry = iterator.next();
+                Marker currentMarker = entry.getKey();
+                Item currentItem = (Item) entry.getValue();
+                if (currentItem.createdTime < (System.currentTimeMillis() - 12000000)) { // 20 minutes = 12000000 ms
+                    iterator.remove();
+                    currentMarker.remove();
+                    mapMarkerItems.remove(currentMarker);
+                }
+            }
         }
     }
 

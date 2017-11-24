@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Item {
 
+    public long createdTime = 0L;
     private LatLng position;
     private String name;
     private String type;
@@ -15,6 +16,7 @@ public class Item {
 
     public Item(double latitude, double longitude, String _name, int _upgradePoints, String _type) {
 
+        createdTime = System.currentTimeMillis();
         position = new LatLng(latitude, longitude);
         name = _name;
         upgradePoints = _upgradePoints;
@@ -24,6 +26,7 @@ public class Item {
 
     public Item (LatLng _position, String _name, String _type, int _upgradePoints) {
 
+        createdTime = System.currentTimeMillis();
         position = _position;
         name = _name;
         upgradePoints = _upgradePoints;

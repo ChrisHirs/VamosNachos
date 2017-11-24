@@ -5,11 +5,6 @@ import android.util.Log;
 import com.example.marcschnaebe.util.Util;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Map;
-
-import static android.R.attr.level;
-import static com.example.marcschnaebe.mynacho.R.id.map;
-
 /**
  * Created by christop.hirschi on 11.10.2017.
  */
@@ -18,6 +13,7 @@ public class Nachos {
 
     /* -------  Attributes  ------ */
 
+    public long createdTime = 0L;
     private LatLng position;
 
     private String name;
@@ -38,6 +34,7 @@ public class Nachos {
 
     public Nachos(double latitude, double longitude, String _name, String _type, int _hp, int _ap, int _level) {
 
+        createdTime = System.currentTimeMillis();
         position = new LatLng(latitude, longitude);
 
         name = _name;
@@ -58,6 +55,8 @@ public class Nachos {
 
     public Nachos(LatLng _position, String _name, String _type, int _level, int _xpCurrent,
                   int _xpMax, int _ap, int _hpCurrent, int _hpMax, int _hpBonus, int _apBonus) {
+
+        createdTime = System.currentTimeMillis();
         position = _position;
 
         name = _name;
