@@ -400,7 +400,7 @@ public class MapsActivity extends FragmentActivity implements
                     if (player.getTarget() != null && isCapturing) {
                         chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
-                        if (chosenNachos.isWinner(player.getTarget())) {
+                        if (chosenNachos.fightToDeathWith(player.getTarget())) {
                             player.getTarget().setHpCurrent(0);
                             player.team.add(player.getTarget());
                         }
@@ -414,8 +414,8 @@ public class MapsActivity extends FragmentActivity implements
                     if (player.getTarget() != null && isDeathMatching) {
                         chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
-                        if (chosenNachos.isWinner(player.getTarget())) {
-                            chosenNachos.addToCurrentXp(5);
+                        if (chosenNachos.fightToDeathWith(player.getTarget())) {
+                            chosenNachos.addToCurrentXp(chosenNachos.calcWinnableExperience(player.getTarget()));
                         }
                         else {
                             player.team.remove(chosenNachos);
@@ -457,6 +457,7 @@ public class MapsActivity extends FragmentActivity implements
                         chosenItem = null;
                     }
 
+                    // Suppression de la target
                     if (player.getTarget() != null) {
                         player.setTarget(null);
                         targetMarker.remove();

@@ -104,7 +104,12 @@ public class Nachos {
     public void addToCurrentXp(int xp) {
         xpCurrent += xp;
         if (xpCurrent >= xpMax) {
+            int xpOverflow = xpCurrent - xpMax;
             leveledUp();
+            if(xpOverflow > 0){
+                this.addToCurrentXp(xpOverflow);
+            }
+
         }
     }
 
@@ -119,7 +124,30 @@ public class Nachos {
         apBonus += 1;
     }
 
-    public boolean isWinner (Nachos enemy) {
+    public int calcWinnableExperience(Nachos enemy){
+        int potentialXP = 5;
+
+        float diffLevel = (enemy.getLevel() - this.level);
+
+        // Moins d'XP
+        if(diffLevel < 0){
+            diffLevel = 1/((-diffLevel)+1);
+        }
+        // Plus d'XP
+        else if (diffLevel > 0){
+            diffLevel += 1;
+        }
+        // XP normale
+        else{
+            diffLevel = 1;
+        }
+
+        potentialXP = (int)(potentialXP * diffLevel);
+
+        return potentialXP;
+    }
+
+    public boolean fightToDeathWith (Nachos enemy) {
         do {
             enemy.setHpCurrent(enemy.getHpCurrent() - ap);
             hpCurrent -= enemy.getAp();
@@ -132,9 +160,12 @@ public class Nachos {
                 " PV: " + enemy.getHpCurrent() + "/" + enemy.getHpMax() + " XP: " +
                 enemy.getXpCurrent() + "/" + enemy.getXpMax());
 
+        // Victoire
         if (hpCurrent <= 0) {
             return false;
-        } else {
+        }
+        // Défaite
+        else {
             return true;
         }
     }
