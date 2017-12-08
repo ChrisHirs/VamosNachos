@@ -395,7 +395,8 @@ public class MapsActivity extends FragmentActivity implements
                             player.team.add(player.getTarget());
                         }
                         else {
-                            player.team.remove(chosenNachos);
+                            player.team.remove(index);
+                            showStarterDialog();
                         }
                         isCapturing = false;
                     }
@@ -410,7 +411,8 @@ public class MapsActivity extends FragmentActivity implements
                             }
                         }
                         else {
-                            player.team.remove(chosenNachos);
+                            player.team.remove(index);
+                            showStarterDialog();
                         }
                         isDeathMatching = false;
                     }
@@ -504,12 +506,7 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-        if(player.team.isEmpty()){
-            StarterDialog starterDialog = new StarterDialog(this);
-            starterDialog.setCancelable(false);
-            starterDialog.show();
-        }
-
+        showStarterDialog();
     }
 
     @Override
@@ -1062,6 +1059,14 @@ public class MapsActivity extends FragmentActivity implements
                 progressBarList.get(i).setVisibility(View.INVISIBLE);
             }
 
+        }
+    }
+
+    public void showStarterDialog(){
+        if(player.team.isEmpty()){
+            StarterDialog starterDialog = new StarterDialog(this);
+            starterDialog.setCancelable(false);
+            starterDialog.show();
         }
     }
 
