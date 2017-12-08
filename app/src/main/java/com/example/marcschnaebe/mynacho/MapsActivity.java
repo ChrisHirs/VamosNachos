@@ -130,8 +130,6 @@ public class MapsActivity extends FragmentActivity implements
     //Joueur
     private Player player = new Player(myPositionMarker);
 
-    //Interface
-
     //Items
     private Button buttonTake;
     private TextView textItemsInfo;
@@ -159,7 +157,6 @@ public class MapsActivity extends FragmentActivity implements
     private BagAdapter bagAdapter;
 
     private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
-
     private ArrayList<ProgressBar> progressBarListBottomTeamNachos = new ArrayList<>();
 
     //Items
@@ -238,8 +235,10 @@ public class MapsActivity extends FragmentActivity implements
         //      INTERFACE
         // -------------------
 
+
+
         //Items
-        buttonTake =  (Button) findViewById(R.id.buttonTake);
+        buttonTake = (Button) findViewById(R.id.buttonTake);
 
         layoutItemsInfo = (LinearLayout) findViewById(R.id.layoutItemsInfo);
         layoutItemsInfo.setVisibility(LinearLayout.GONE);
@@ -308,11 +307,6 @@ public class MapsActivity extends FragmentActivity implements
                 e.printStackTrace();
             }
         }
-        //Sinon on initialise une nouvelle team
-        else {
-            //TODO: changer l'initialisation de la team
-            player.initTeam();
-        }
 
         //Le viewFlipper
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
@@ -354,7 +348,6 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-
         buttonTeam.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //viewFlipper.showNext();
@@ -386,9 +379,6 @@ public class MapsActivity extends FragmentActivity implements
                 Util.showSnackBar("Choose a Nachomon to fight it!", findViewById(android.R.id.content));
             }
         });
-
-
-
 
         for (i = 0; i < buttonListBottomTeamNachos.size(); i++) {
             final int index = i;
@@ -514,6 +504,12 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
+        if(player.team.isEmpty()){
+            StarterDialog starterDialog = new StarterDialog(this);
+            starterDialog.setCancelable(false);
+            starterDialog.show();
+        }
+
     }
 
     @Override
@@ -534,6 +530,11 @@ public class MapsActivity extends FragmentActivity implements
             mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+    }
+
+    public void chooseStarterNachos(String stringNacho) {
+        player.team.add(0, NachosGenerator.AddNewSpecificNachos(stringNacho));
+        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
     }
 
     @Override

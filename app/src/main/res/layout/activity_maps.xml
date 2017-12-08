@@ -37,6 +37,10 @@
                     layout="@layout/layout_bag"
                     android:id="@+id/layout_bag" />
 
+                <include
+                    layout="@layout/starters_nachomon"
+                    android:id="@+id/starters_nachomon" />
+
 
             </ViewFlipper>
 

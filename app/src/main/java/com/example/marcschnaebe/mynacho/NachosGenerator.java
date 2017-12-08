@@ -1,18 +1,12 @@
 package com.example.marcschnaebe.mynacho;
 
 import com.example.marcschnaebe.util.Util;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.R.attr.level;
-import static com.example.marcschnaebe.mynacho.R.id.map;
 
 /**
  * Created by christop.hirschi on 11.10.2017.
@@ -81,6 +75,30 @@ public class NachosGenerator {
 
         return new Nachos(latitude, longitude, name, type, hp, ap, level);
 
+    }
+
+    /**
+     * Creates a new Nachos based on a strin.
+     *
+     * @param stringNachos Nom du Nachos à créer
+     * @return new Nachos
+     */
+    public static Nachos AddNewSpecificNachos (String stringNachos) {
+        Map<String, String> chosenList = new HashMap<String, String>();
+
+        for (Map<String, String> list : nachosList) {
+            if (list.get("name").equals(stringNachos)) {
+                chosenList = list;
+            }
+        }
+
+        //Attributs
+        String name = chosenList.get("name");
+        String type = chosenList.get("type");
+        int hp = Integer.parseInt(chosenList.get("health-points"));
+        int ap = Integer.parseInt(chosenList.get("attack-points"));
+
+        return new Nachos(0.0, 0.0, name, type, hp, ap, 1);
     }
 
 }
