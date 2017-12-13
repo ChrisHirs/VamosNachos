@@ -84,19 +84,20 @@ public class NachosGenerator {
      * @return new Nachos
      */
     public static Nachos AddNewSpecificNachos (String stringNachos) {
-        Map<String, String> chosenList = new HashMap<String, String>();
+        String name = "";
+        String type = "";
+        int hp = 0;
+        int ap = 0;
 
         for (Map<String, String> list : nachosList) {
             if (list.get("name").equals(stringNachos)) {
-                chosenList = list;
+                //Attributs
+                name = list.get("name");
+                type = list.get("type");
+                hp = Integer.parseInt(list.get("health-points"));
+                ap = Integer.parseInt(list.get("attack-points"));
             }
         }
-
-        //Attributs
-        String name = chosenList.get("name");
-        String type = chosenList.get("type");
-        int hp = Integer.parseInt(chosenList.get("health-points"));
-        int ap = Integer.parseInt(chosenList.get("attack-points"));
 
         return new Nachos(0.0, 0.0, name, type, hp, ap, 1);
     }
