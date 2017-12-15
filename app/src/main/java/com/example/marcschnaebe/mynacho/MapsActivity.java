@@ -5,14 +5,17 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -511,8 +514,33 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     protected void onResume() {
-        Log.d("test", "OnResume");
         super.onResume();
+
+        // Check si le GPS est activé par l'utilisateur
+        LocationManager mlocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Affichage d'une popup dans le cas où il est désactivé
+        if(!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Your GPS is off");
+            builder.setMessage("You need to turn on your GPS to enjoy the game!\n\nPlease activate it.");
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // pass
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
 
         //Connexion à l'API
         mGoogleApiClient.connect();
