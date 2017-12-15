@@ -14,25 +14,65 @@ import java.util.Map;
 
 public class ItemsGenerator {
 
-    private static final Map<String, String> nachoPotionMap = new HashMap<String, String>(){{ put("name", "Nachopotion"); put("points", "0"); put("type", "Health"); }};
-    private static final Map<String, String> nachoDefMap = new HashMap<String, String>(){{ put("name", "UpgradeDEF"); put("points", "5"); put("type", "Def"); }};
-    private static final Map<String, String> upgradeFireMap = new HashMap<String, String>(){{ put("name", "UpgradeFire"); put("points", "2"); put("type", "Fire"); }};
-    private static final Map<String, String> upgradeRockMap = new HashMap<String, String>(){{ put("name", "UpgradeRock"); put("points", "2");  put("type", "Rock");}};
-    private static final Map<String, String> upgradeElectricMap = new HashMap<String, String>(){{ put("name", "UpgradeElectric"); put("points", "2"); put("type", "Electric"); }};
-    private static final Map<String, String> upgradeGrassMap = new HashMap<String, String>(){{ put("name", "UpgradeGrass"); put("points", "2");  put("type", "Grass"); }};
-    private static final Map<String, String> upgradeGroundMap = new HashMap<String, String>(){{ put("name", "UpgradeGround"); put("points", "2");  put("type", "Ground"); }};
-    private static final Map<String, String> upgradeWaterMap = new HashMap<String, String>(){{ put("name", "UpgradeWater"); put("points", "2"); put("type", "Water"); }};
+    /* -------  Consts  ------ */
 
-    public static ArrayList<Map> itemList = new ArrayList<Map>(){{
-        add(nachoPotionMap);
-        add(nachoDefMap);
-        add(upgradeFireMap);
-        add(upgradeRockMap);
-        add(upgradeElectricMap);
-        add(upgradeGrassMap);
-        add(upgradeGroundMap);
-        add(upgradeWaterMap);
-    }};
+    private static final Map<String, String> nachoPotionMap = new HashMap<String, String>();
+    private static final Map<String, String> nachoDefMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeFireMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeRockMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeElectricMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeGrassMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeGroundMap = new HashMap<String, String>();
+    private static final Map<String, String> upgradeWaterMap = new HashMap<String, String>();
+
+    /* -------  Attributes  ------ */
+
+    public static ArrayList<Map> itemList = new ArrayList<Map>();
+
+    /* -------  Initialisateur statique ------ */
+
+    static {
+        nachoPotionMap.put("name", "Nachopotion");
+        nachoPotionMap.put("points", "0");
+        nachoPotionMap.put("type", "Health");
+
+        nachoDefMap.put("name", "UpgradeDEF");
+        nachoDefMap.put("points", "5");
+        nachoDefMap.put("type", "Def");
+
+        upgradeFireMap.put("name", "UpgradeFire");
+        upgradeFireMap.put("points", "2");
+        upgradeFireMap.put("type", "Fire");
+
+        upgradeRockMap.put("name", "UpgradeRock");
+        upgradeRockMap.put("points", "2");
+        upgradeRockMap.put("type", "Rock");
+
+        upgradeElectricMap.put("name", "UpgradeElectric");
+        upgradeElectricMap.put("points", "2");
+        upgradeElectricMap.put("type", "Electric");
+
+        upgradeGrassMap.put("name", "UpgradeGrass");
+        upgradeGrassMap.put("points", "2");
+        upgradeGrassMap.put("type", "Grass");
+
+        upgradeGroundMap.put("name", "UpgradeGround");
+        upgradeGroundMap.put("points", "2");
+        upgradeGroundMap.put("type", "Ground");
+
+        upgradeWaterMap.put("name", "UpgradeWater");
+        upgradeWaterMap.put("points", "2");
+        upgradeWaterMap.put("type", "Water");
+
+        itemList.add(nachoPotionMap);
+        itemList.add(nachoDefMap);
+        itemList.add(upgradeFireMap);
+        itemList.add(upgradeRockMap);
+        itemList.add(upgradeElectricMap);
+        itemList.add(upgradeGrassMap);
+        itemList.add(upgradeGroundMap);
+        itemList.add(upgradeWaterMap);
+    }
 
     /**
      * Creates a new Nachos.
@@ -61,6 +101,5 @@ public class ItemsGenerator {
         int upgradePoints = Integer.parseInt(mapItems.get("points"));
 
         return new Item(latitude, longitude, name, upgradePoints, type);
-
     }
 }

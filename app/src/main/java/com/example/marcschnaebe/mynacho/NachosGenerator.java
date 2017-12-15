@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.marcschnaebe.mynacho.R.drawable.mustaupicos;
+
 /**
  * Created by christop.hirschi on 11.10.2017.
  */
@@ -17,23 +19,57 @@ public class NachosGenerator {
     /* -------  Consts  ------ */
 
     public static long generationTimer = 0; //System.currentTimeMillis() + 5000L
-    private static final Map<String, String> caraponchoMap = new HashMap<String, String>(){{ put("name", "Caraponcho"); put("type", "Water"); put("health-points", "10"); put("attack-points", "2"); }};
-    private static final Map<String, String> salamuchosMap = new HashMap<String, String>(){{ put("name", "Salamuchos"); put("type", "Fire"); put("health-points", "10"); put("attack-points", "3"); }};
-    private static final Map<String, String> buritopsMap = new HashMap<String, String>(){{ put("name", "Buritops"); put("type", "Rock"); put("health-points", "10"); put("attack-points", "1"); }};
-    private static final Map<String, String> mustaupicosMap = new HashMap<String, String>(){{ put("name", "Mustaupicos"); put("type", "Ground"); put("health-points", "10"); put("attack-points", "1"); }};
-    private static final Map<String, String> bulbiatchosMap = new HashMap<String, String>(){{ put("name", "Bulbiatchos"); put("type", "Grass"); put("health-points", "10"); put("attack-points", "2"); }};
-    private static final Map<String, String> maracachuMap = new HashMap<String, String>(){{ put("name", "Maracachu"); put("type", "Electric"); put("health-points", "10"); put("attack-points", "3"); }};
+    private static final Map<String, String> caraponchoMap = new HashMap<String, String>();
+    private static final Map<String, String> salamuchosMap = new HashMap<String, String>();
+    private static final Map<String, String> buritopsMap = new HashMap<String, String>();
+    private static final Map<String, String> mustaupicosMap = new HashMap<String, String>();
+    private static final Map<String, String> bulbiatchosMap = new HashMap<String, String>();
+    private static final Map<String, String> maracachuMap = new HashMap<String, String>();
 
     /* -------  Attributes  ------ */
 
-    public static ArrayList<Map> nachosList = new ArrayList<Map>(){{
-        add(caraponchoMap);
-        add(salamuchosMap);
-        add(buritopsMap);
-        add(mustaupicosMap);
-        add(bulbiatchosMap);
-        add(maracachuMap);
-    }};
+    public static ArrayList<Map> nachosList = new ArrayList<Map>();
+
+    /* -------  Initialisateur statique ------ */
+
+    static {
+        caraponchoMap.put("name", "Caraponcho");
+        caraponchoMap.put("type", "Water");
+        caraponchoMap.put("health-points", "10");
+        caraponchoMap.put("attack-points", "2");
+
+        salamuchosMap.put("name", "Salamuchos");
+        salamuchosMap.put("type", "Fire");
+        salamuchosMap.put("health-points", "10");
+        salamuchosMap.put("attack-points", "3");
+
+        buritopsMap.put("name", "Buritops");
+        buritopsMap.put("type", "Rock");
+        buritopsMap.put("health-points", "10");
+        buritopsMap.put("attack-points", "1");
+
+        mustaupicosMap.put("name", "Mustaupicos");
+        mustaupicosMap.put("type", "Ground");
+        mustaupicosMap.put("health-points", "10");
+        mustaupicosMap.put("attack-points", "1");
+
+        bulbiatchosMap.put("name", "Bulbiatchos");
+        bulbiatchosMap.put("type", "Grass");
+        bulbiatchosMap.put("health-points", "10");
+        bulbiatchosMap.put("attack-points", "2");
+
+        maracachuMap.put("name", "Maracachu");
+        maracachuMap.put("type", "Electric");
+        maracachuMap.put("health-points", "10");
+        maracachuMap.put("attack-points", "3");
+
+        nachosList.add(caraponchoMap);
+        nachosList.add(salamuchosMap);
+        nachosList.add(buritopsMap);
+        nachosList.add(mustaupicosMap);
+        nachosList.add(bulbiatchosMap);
+        nachosList.add(maracachuMap);
+    }
 
     /* -------  Methods ------- */
 
