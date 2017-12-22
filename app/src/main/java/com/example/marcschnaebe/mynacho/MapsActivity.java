@@ -33,7 +33,9 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.example.marcschnaebe.util.JaxParser;
+import com.example.marcschnaebe.util.PermissionHandler;
 import com.example.marcschnaebe.util.Util;
+import com.example.marcschnaebe.util.XMLHandler;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -78,6 +80,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import static com.example.marcschnaebe.mynacho.R.id.map;
+import static com.example.marcschnaebe.util.XMLHandler.populateFromXMLFile;
 
 /**
  * Main activity containing stuff related to Google Map and whatnot
@@ -297,26 +300,7 @@ public class MapsActivity extends FragmentActivity implements
 
         //Fill team with player's Nachos if file exists
         if (file.exists() && file.length() != 0) {
-            try {
-                InputStream inputStream = new FileInputStream(file);
-
-                //XML file parser
-                JaxParser parser = new JaxParser(inputStream);
-
-                //Set list created by XMl parser
-                ArrayList<Object> objectsFromParser = parser.getObjects();
-                for (Object obj : objectsFromParser) {
-                    if (obj.getClass() == Nachos.class) {
-                        player.team.add((Nachos) obj);
-                    }
-                    else if (obj.getClass() == Item.class) {
-                        player.bag.add((Item) obj);
-                    }
-                }
-            }
-            catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+            XMLHandler.populateFromXMLFile(file, player);
         }
 
         //ViewFlipper
@@ -389,6 +373,11 @@ public class MapsActivity extends FragmentActivity implements
                 Util.showSnackBar("Choose a Nachomon to fight it!", findViewById(android.R.id.content));
             }
         });
+
+
+        // ------------------------------
+        //       TEAM BUTTONS HANDLING
+        // ------------------------------
 
         for (i = 0; i < buttonListBottomTeamNachos.size(); i++) {
             final int index = i;
@@ -518,6 +507,21 @@ public class MapsActivity extends FragmentActivity implements
     protected void onResume() {
         super.onResume();
 
+        //API Connection
+        mGoogleApiClient.connect();
+
+        //Save sensor listeners
+        if(depreciatedOrientation){
+
+            //Depreciated utilisation
+            mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        else{
+            //New way of using the Accelerometer and the Magnetometer
+            mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
         //Check if GPS is activated by user
         LocationManager mlocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -543,116 +547,20 @@ public class MapsActivity extends FragmentActivity implements
             AlertDialog alert = builder.create();
             alert.show();
         }
-
-        //API Connection
-        mGoogleApiClient.connect();
-
-        //Save sensor listeners
-        if(depreciatedOrientation){
-
-            //Depreciated utilisation
-            mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        else{
-            //New way of using the Accelerometer and the Magnetometer
-            mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-    }
-
-    public void chooseStarterNachos(String stringNacho) {
-        player.team.add(0, NachosGenerator.AddNewSpecificNachos(stringNacho));
-        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        //API Deconnection
+        //API Disconnection
         mGoogleApiClient.disconnect();
 
-        //Stop sesnors listeners
+        //Stop sensors listeners
         mSensorManager.unregisterListener(this);
 
-        //XML String
-        String string = "";
-
-        //XML Wrting
-        //TODO: mettre ce magnifique try-catch dans une méthode... peut-être
-        try
-        {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            Document doc = documentBuilder.newDocument();
-            doc.setXmlStandalone(true);
-
-            Element root = doc.createElement("objects");
-            doc.appendChild(root);
-
-            //For each Nachos in the list
-            for (Nachos n : player.team)
-            {
-                //Add Nachos element
-                Element nachos = doc.createElement("nachos");
-
-                //Add Nachos attributes
-                nachos.setAttribute("type", n.getType());
-                nachos.setAttribute("name", n.getName());
-                nachos.setAttribute("level", Integer.toString(n.getLevel()));
-                nachos.setAttribute("xpCurrent", Integer.toString(n.getXpCurrent()));
-                nachos.setAttribute("xpMax", Integer.toString(n.getXpMax()));
-                nachos.setAttribute("ap", Integer.toString(n.getAp()));
-                nachos.setAttribute("hpCurrent", Integer.toString(n.getHpCurrent()));
-                nachos.setAttribute("hpMax", Integer.toString(n.getHpMax()));
-                nachos.setAttribute("hpBonus", Integer.toString(n.getHpBonus()));
-                nachos.setAttribute("apBonus", Integer.toString(n.getApBonus()));
-                root.appendChild(nachos);
-            }
-
-            //For each Items in the list
-            for (Item i : player.bag)
-            {
-                //Add Item element
-                Element item = doc.createElement("item");
-
-                //Add Item attributes
-                item.setAttribute("type", i.getType());
-                item.setAttribute("name", i.getName());
-                item.setAttribute("up", Integer.toString(i.getUpgradePoints()));
-                root.appendChild(item);
-            }
-
-            //Display and write XML string if no Nachos
-            if (!player.team.isEmpty())
-            {
-                Transformer tf = TransformerFactory.newInstance().newTransformer();
-                tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-                tf.setOutputProperty(OutputKeys.INDENT, "yes");
-                tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-                Writer out = new StringWriter();
-                tf.transform(new DOMSource(doc), new StreamResult(out));
-
-                //Console displaying
-                Log.d("xml", out.toString());
-
-                //String writing
-                string = out.toString();
-            }
-
-
-            //Write XMl in output file
-            FileOutputStream outputStream;
-
-            outputStream = openFileOutput("objects", Context.MODE_PRIVATE);
-            outputStream.write(string.getBytes());
-            outputStream.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        //XML Writing
+        XMLHandler.writeXMLFile(player, getApplicationContext());
     }
 
     @Override
@@ -730,7 +638,6 @@ public class MapsActivity extends FragmentActivity implements
                     double endLongitude = itemsPosition.longitude;
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
 
-                    //TODO : Mise à jour sur le déplacement onlocchange
                     layoutInfo.setVisibility(LinearLayout.GONE);
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
                     textItemsInfo.setText("Nom: " + items.getName() + " Type: " + items.getType());
@@ -743,7 +650,6 @@ public class MapsActivity extends FragmentActivity implements
                         else{
                             buttonTake.setEnabled(false);
                         }
-
                     }
                     else {
                         buttonTake.setEnabled(false);
@@ -757,19 +663,11 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    public boolean onMyLocationButtonClick() {
-        // Return false so that we don't consume the event and the default behavior still occurs. (the camera animates to the user's current position).
-        return false;
-    }
-
-    @Override
     public void onConnected(Bundle connectionHint) {
-
         Log.d("test", "Connecté");
 
         //Verify user's access permission to localisation
-        if (Util.checkLocationPermission(this)) {
-
+        if (PermissionHandler.checkLocationPermission(this)) {
             Log.d("test", "Connecté - Permissions accordées");
 
             //If permissions are accepted
@@ -782,50 +680,25 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onConnectionSuspended(int cause) {
-        Log.d("test", "Connexion suspendue");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.d("test", "Connexion échouée");
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
         Log.d("test", "OnRequestPersmissionResult");
 
         //Request code
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-
                 Log.d("test", "OnRequestPersmissionResult - Request code localisation");
 
                 //Authorized permission
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                     Log.d("test", "OnRequestPersmissionResult - Accès autorisé");
-
                 }
                 //Unauthorized permission
                 else {
                     Log.d("test", "OnRequestPersmissionResult - Accès refusé");
-
                 }
                 return;
             }
         }
-    }
-
-    @Override
-    public void activate(OnLocationChangedListener onLocationChangedListener) {
-        mMapLocationListener = onLocationChangedListener;
-    }
-
-    @Override
-    public void deactivate() {
-        mMapLocationListener = null;
     }
 
     /**
@@ -867,6 +740,7 @@ public class MapsActivity extends FragmentActivity implements
 
         //Create new Nachos and Item
         Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
+
         if (System.currentTimeMillis() > NachosGenerator.generationTimer) {
             Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
             Marker mNachos = placeMarker(newNachos);
@@ -958,9 +832,34 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
+    public boolean onMyLocationButtonClick() {
+        // Return false so that we don't consume the event and the default behavior still occurs.
+        // (the camera animates to the user's current position).
+        return false;
     }
+
+    @Override
+    public void activate(OnLocationChangedListener onLocationChangedListener) {
+        mMapLocationListener = onLocationChangedListener;
+    }
+
+    @Override
+    public void deactivate() {
+        mMapLocationListener = null;
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d("test", "Connexion suspendue");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d("test", "Connexion échouée");
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) { Log.d("test", "onAccuracyChanged"); }
 
     /**
      * Updates Google Map's angle camera
@@ -1053,8 +952,17 @@ public class MapsActivity extends FragmentActivity implements
                 buttonList.get(i).setVisibility(View.INVISIBLE);
                 progressBarList.get(i).setVisibility(View.INVISIBLE);
             }
-
         }
+    }
+
+    /**
+     * Adds first nachos to the team
+     *
+     * @param stringNacho name of nachos
+     */
+    public void chooseStarterNachos(String stringNacho) {
+        player.team.add(0, NachosGenerator.AddNewSpecificNachos(stringNacho));
+        updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
     }
 
     /**
@@ -1067,5 +975,4 @@ public class MapsActivity extends FragmentActivity implements
             starterDialog.show();
         }
     }
-
 }
