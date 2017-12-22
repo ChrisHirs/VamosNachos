@@ -79,7 +79,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import static com.example.marcschnaebe.mynacho.R.id.map;
 
-
+/**
+ * Main activity containing stuff related to Google Map and whatnot
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class MapsActivity extends FragmentActivity implements
         ConnectionCallbacks,
         OnConnectionFailedListener,
@@ -92,45 +97,45 @@ public class MapsActivity extends FragmentActivity implements
     //API
     private GoogleApiClient mGoogleApiClient;
 
-    //Carte et positionnement
+    //Map and positions
     private GoogleMap mMap;
     private LatLng latLng;
     private float currentBearing = 0;
     private long lastPlayerRotation = 0;
 
-    //Listener de localisation
+    //Localisation listener
     private OnLocationChangedListener mMapLocationListener = null;
 
-    //Marqueur du joueur
+    //Player's marker
     private Marker myPositionMarker;
 
-    //Marqueur de la cible
+    //Target's marker
     private Marker targetMarker;
 
-    //SENSORS
+    //Sensors
     private SensorManager mSensorManager;
     private Sensor mMagneticSensor;
     private Sensor mAcceleroSensor;
     private Sensor mOrientationSensor;
 
-    //Calculs des sensors pour la boussole
+    //Compass sensors calculations
     private float[] gravityData = new float[3];
     private float[] geomagneticData  = new float[3];
     private boolean hasGravityData = false;
     private boolean hasGeomagneticData = false;
     private double rotationInDegrees;
 
-    //Boolean pour différencier la capture du deathmatch
+    //Deathmatch differentiation booleans
     private boolean isCapturing = false;
     private boolean isDeathMatching = false;
 
-    //Type de sensors utilisés pour la boussole (true = déprécié)
+    //Compass used sensors types (true = depreciated)
     private boolean depreciatedOrientation = false;
 
-    //Code des Permissions
+    //Permission code
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
-    //Joueur
+    //Player
     private Player player = new Player(myPositionMarker);
 
     //Items
@@ -138,6 +143,8 @@ public class MapsActivity extends FragmentActivity implements
     private TextView textItemsInfo;
     private ImageView imageItemsInfo;
     private LinearLayout layoutItemsInfo;
+
+    private HashMap<Marker, Item> mapMarkerItems = new HashMap<Marker, Item>();
 
     private ImageButton buttonBag;
 
@@ -162,13 +169,9 @@ public class MapsActivity extends FragmentActivity implements
     private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
     private ArrayList<ProgressBar> progressBarListBottomTeamNachos = new ArrayList<>();
 
-    //Items
-    private HashMap<Marker, Item> mapMarkerItems = new HashMap<Marker, Item>();
-
-    //Nachomons
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
 
-    //Paramètres pour la localisation
+    //Localisation parameters
     private static final LocationRequest REQUEST = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(2000)
@@ -190,7 +193,7 @@ public class MapsActivity extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFragment.getMapAsync(this);
 
-        //Préparation de la connection à Google
+        //Google connection preparation
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -204,24 +207,24 @@ public class MapsActivity extends FragmentActivity implements
         //Sensor Manager
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
-        //Affectation des Sensors
+        //Sensors affectations
         if(depreciatedOrientation){
-            //Dépréciée
+            //Depreciated
             mOrientationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         }
         else{
-            //Magnétomètre et Accéleromètre
+            //Magnetometer et Accelerometer
             mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
             mAcceleroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
 
-        // Liste des Sensors disponibles
+        //Available sensors list
         List<Sensor> msensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
-        // Affiche le nombre de Sensors disponibles
+        //Display number of available sensors
         Log.d("sensor", Integer.toString(msensorList.size()));
 
-        // Création d'une liste des Sensors de l'appareil
+        //Creation of a list of sensors' device
         String sSensList = new String("");
         Sensor tmp;
         int x, i;
@@ -229,7 +232,8 @@ public class MapsActivity extends FragmentActivity implements
             tmp = msensorList.get(i);
             sSensList = " "+sSensList+tmp.getName() + "\n";
         }
-        //Affichage de la liste s'il y a au moins un Sensor
+
+        //Display a list if there is at least one sensor
         if (i>0){
             Log.d("sensor", sSensList);
         }
@@ -237,8 +241,6 @@ public class MapsActivity extends FragmentActivity implements
         // -------------------
         //      INTERFACE
         // -------------------
-
-
 
         //Items
         buttonTake = (Button) findViewById(R.id.buttonTake);
@@ -268,8 +270,7 @@ public class MapsActivity extends FragmentActivity implements
         textInfo = (TextView) findViewById(R.id.textInfo);
         imageInfo = (ImageView) findViewById(R.id.imageInfo);
 
-
-        //Remplissage de la liste de boutons de l'équipe de Nachomons
+        //Fill a list of Nachos team buttons
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN1));
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN2));
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN3));
@@ -277,9 +278,7 @@ public class MapsActivity extends FragmentActivity implements
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN5));
         buttonListBottomTeamNachos.add((ImageButton) findViewById(R.id.imageButtonN6));
 
-
-
-        //Remplissage de la liste de barre de vie de l'équipe de Nachomons
+        //Fill a list of Nachos healthbars
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN1));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN2));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN3));
@@ -287,15 +286,18 @@ public class MapsActivity extends FragmentActivity implements
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN5));
         progressBarListBottomTeamNachos.add((ProgressBar) findViewById(R.id.progressBarN6));
 
-        //Obtention du fichier XML de la team et des items
+        //Get XML files containing items and team
         File file = new File(getApplicationContext().getFilesDir(), "objects");
-        //Remplissage de l'équipe avec les Nachomons du joueur si le fichier existe
+
+        //Fill team with player's Nachos if file exists
         if (file.exists() && file.length() != 0) {
             try {
                 InputStream inputStream = new FileInputStream(file);
-                //Parseur du fichier XML
+
+                //XML file parser
                 JaxParser parser = new JaxParser(inputStream);
-                //Affectation de la liste crée par le parseur XML
+
+                //Set list created by XMl parser
                 ArrayList<Object> objectsFromParser = parser.getObjects();
                 for (Object obj : objectsFromParser) {
                     if (obj.getClass() == Nachos.class) {
@@ -311,16 +313,16 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
 
-        //Le viewFlipper
+        //ViewFlipper
         viewFlipper = (ViewFlipper) findViewById(R.id.myViewFlipper);
 
         viewFlipper.setInAnimation(this, R.anim.view_transition_in_bottom);
         viewFlipper.setOutAnimation(this, R.anim.view_transition_out_bottom);
 
-        //Update des images button et barres de vie de l'équipe Nachomon dans l'affichage
+        //Update Nachos healthbars and buttons on display
         updateDisplayInfoTeam(buttonListBottomTeamNachos, progressBarListBottomTeamNachos);
 
-        //Bouton du sac
+        //bag button
         buttonBag.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -353,7 +355,6 @@ public class MapsActivity extends FragmentActivity implements
 
         buttonTeam.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //viewFlipper.showNext();
                 if(viewFlipper.getCurrentView() == findViewById(R.id.layout_team)){
                     viewFlipper.setDisplayedChild(viewFlipper.indexOfChild(findViewById(R.id.layout_main)));
                 }
@@ -454,7 +455,7 @@ public class MapsActivity extends FragmentActivity implements
                         chosenItem = null;
                     }
 
-                    // Suppression de la target
+                    //Target deletion
                     if (player.getTarget() != null) {
                         player.setTarget(null);
                         targetMarker.remove();
@@ -462,7 +463,7 @@ public class MapsActivity extends FragmentActivity implements
                         layoutInfo.setVisibility(LinearLayout.GONE);
                     }
 
-                    //Mise à jour du sac et de la team
+                    //Update team and bag
                     teamAdapter.notifyDataSetChanged();
                     bagAdapter.notifyDataSetChanged();
 
@@ -476,11 +477,6 @@ public class MapsActivity extends FragmentActivity implements
         // ------------------------------
 
         ListView listViewTeam = (ListView) findViewById(R.id.layout_team);
-//
-//        TextView textView = new TextView(this);
-//        textView.setText("Hello. I'm a header view");
-//
-//        listViewTeam.addHeaderView(textView);
 
         teamAdapter = new TeamAdapter(this, player.team);
         listViewTeam.setAdapter(teamAdapter);
@@ -516,10 +512,10 @@ public class MapsActivity extends FragmentActivity implements
     protected void onResume() {
         super.onResume();
 
-        // Check si le GPS est activé par l'utilisateur
+        //Check if GPS is activated by user
         LocationManager mlocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        // Affichage d'une popup dans le cas où il est désactivé
+        //Display a popup in case it is deactivated
         if(!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Your GPS is off");
@@ -535,23 +531,24 @@ public class MapsActivity extends FragmentActivity implements
             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    // pass
+                    //Pass
                 }
             });
             AlertDialog alert = builder.create();
             alert.show();
         }
 
-        //Connexion à l'API
+        //API Connection
         mGoogleApiClient.connect();
 
-        //Enregistrement des listener des Sensors
+        //Save sensor listeners
         if(depreciatedOrientation){
-            //Utilisation dépréciée
+
+            //Depreciated utilisation
             mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         else{
-            //Nouvelle façon de travailler avec un Accéleromètre et un Magnétomètre
+            //New way of using the Accelerometer and the Magnetometer
             mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -565,15 +562,17 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        //Déconnexion de l'API
+
+        //API Deconnection
         mGoogleApiClient.disconnect();
-        //Arrêt des listener de Sensors
+
+        //Stop sesnors listeners
         mSensorManager.unregisterListener(this);
 
-        //String du XML
+        //XML String
         String string = "";
 
-        //Ecriture du XML
+        //XML Wrting
         //TODO: mettre ce magnifique try-catch dans une méthode... peut-être
         try
         {
@@ -586,13 +585,13 @@ public class MapsActivity extends FragmentActivity implements
             Element root = doc.createElement("objects");
             doc.appendChild(root);
 
-            //Pour chaque nachos dans la liste...
+            //For each Nachos in the list
             for (Nachos n : player.team)
             {
-                //Ajout de l'élément nachos
+                //Add Nachos element
                 Element nachos = doc.createElement("nachos");
 
-                //Ajout des attributs du nachos
+                //Add Nachos attributes
                 nachos.setAttribute("type", n.getType());
                 nachos.setAttribute("name", n.getName());
                 nachos.setAttribute("level", Integer.toString(n.getLevel()));
@@ -606,20 +605,20 @@ public class MapsActivity extends FragmentActivity implements
                 root.appendChild(nachos);
             }
 
-            //Pour chaque items dans la liste...
+            //For each Items in the list
             for (Item i : player.bag)
             {
-                //Ajout de l'élément item
+                //Add Item element
                 Element item = doc.createElement("item");
 
-                //Ajout des attributs du nachos
+                //Add Item attributes
                 item.setAttribute("type", i.getType());
                 item.setAttribute("name", i.getName());
                 item.setAttribute("up", Integer.toString(i.getUpgradePoints()));
                 root.appendChild(item);
             }
 
-            //Affichage dans la console et écriture du XML dans la String s'il y a des nachos à écrire
+            //Display and write XML string if no Nachos
             if (!player.team.isEmpty())
             {
                 Transformer tf = TransformerFactory.newInstance().newTransformer();
@@ -630,15 +629,15 @@ public class MapsActivity extends FragmentActivity implements
                 Writer out = new StringWriter();
                 tf.transform(new DOMSource(doc), new StreamResult(out));
 
-                //Affichage dans la console
+                //Console displaying
                 Log.d("xml", out.toString());
 
-                //Ecriture du string
+                //String writing
                 string = out.toString();
             }
 
 
-            //Ecriture du XML dans le fichier
+            //Write XMl in output file
             FileOutputStream outputStream;
 
             outputStream = openFileOutput("objects", Context.MODE_PRIVATE);
@@ -655,7 +654,7 @@ public class MapsActivity extends FragmentActivity implements
 
         Log.d("test", "OnMapReady");
 
-        //Configuration de la Map
+        //Map Configuration
         mMap = map;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setAllGesturesEnabled(false);
@@ -665,7 +664,8 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                // Cache les infos du marqueur lorsque l'on clique ailleurs sur la map
+
+                //Hide marker's infos if user touches everywhere else on map
                 layoutInfo.setVisibility(LinearLayout.GONE);
                 layoutItemsInfo.setVisibility(LinearLayout.GONE);
             }
@@ -696,7 +696,7 @@ public class MapsActivity extends FragmentActivity implements
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
                     textInfo.setText("Name: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " LVL: " + nachos.getLevel());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
-                    if (results[0] < 400) { // < 40
+                    if (results[0] < 40) { //400
                         buttonDeath.setEnabled(true);
                         Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
                         if(player.team.size() < Player.getMaxTeamSize()){
@@ -725,13 +725,12 @@ public class MapsActivity extends FragmentActivity implements
                     Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
 
                     //TODO : Mise à jour sur le déplacement onlocchange
-
                     layoutInfo.setVisibility(LinearLayout.GONE);
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
                     textItemsInfo.setText("Nom: " + items.getName() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
 
-                    if (results[0] < 400) { //40
+                    if (results[0] < 40) { //400
                         if(player.bag.size() < Player.getMaxBagSize()){
                             buttonTake.setEnabled(true);
                         }
@@ -745,7 +744,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                 }
 
-                // Event was handled by our code do not launch default behaviour.
+                // Event was handled by our code, do not launch default behaviour.
                 return true;
             }
         });
@@ -753,8 +752,7 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public boolean onMyLocationButtonClick() {
-        // Return false so that we don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
+        // Return false so that we don't consume the event and the default behavior still occurs. (the camera animates to the user's current position).
         return false;
     }
 
@@ -763,14 +761,15 @@ public class MapsActivity extends FragmentActivity implements
 
         Log.d("test", "Connecté");
 
-        //Vérifie les permissions d'accès à la localisatiion de l'utilisateur
+        //Verify user's access permission to localisation
         if (checkLocationPermission()) {
 
             Log.d("test", "Connecté - Permissions accordées");
 
-            //Si les permissions sont respectées
+            //If permissions are accepted
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //Active les mises à jour de la localisation de l'utilisateur
+
+                //activate user's localisation update
                 LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, REQUEST, this);
             }
         }
@@ -788,19 +787,20 @@ public class MapsActivity extends FragmentActivity implements
 
 
     /**
-     * Permet de vérifier les permissions d'accès à la localisation de l'utilisateur et de les demander si elles ne sont pas encore validées.
-     * @return boolean True si les permissions sont accordées, sinon False
+     * Verify user's localisation access permissions and ask them otherwise
+     *
+     * @return boolean True if authorized permissions, otherwise False
      */
     public boolean checkLocationPermission() {
 
         Log.d("test", "CheckLocationPermission");
 
-        //Si les permissions ne sont pas encore accordées ...
+        //If they are not authorized...
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.d("test", "CheckLocationPermission - Passage compliqué");
 
-            // Si une explication est requise...
+            //If one permission is needed...
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 Log.d("test", "CheckLocationPermission - Doit donner infos");
@@ -821,7 +821,7 @@ public class MapsActivity extends FragmentActivity implements
                         .create()
                         .show();
             }
-            //Si aucune explication n'est requise
+            //If none is needed...
             else {
 
                 Log.d("test", "CheckLocationPermission - Demande de la permission");
@@ -831,10 +831,10 @@ public class MapsActivity extends FragmentActivity implements
             }
             return false;
         }
-        //Si les permissions sont déjà accordées
+
+        //If permissions are already authorized...
         else {
             Log.d("test", "CheckLocationPermission - Passe direct");
-
             return true;
         }
     }
@@ -844,19 +844,19 @@ public class MapsActivity extends FragmentActivity implements
 
         Log.d("test", "OnRequestPersmissionResult");
 
-        //Selon le code de requête reçu
+        //Request code
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
 
                 Log.d("test", "OnRequestPersmissionResult - Request code localisation");
 
-                // Si la permissions a été accordée
+                //Authorized permission
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.d("test", "OnRequestPersmissionResult - Accès autorisé");
 
                 }
-                // Permission refusée
+                //Unauthorized permission
                 else {
                     Log.d("test", "OnRequestPersmissionResult - Accès refusé");
 
@@ -865,7 +865,6 @@ public class MapsActivity extends FragmentActivity implements
             }
         }
     }
-
 
     @Override
     public void activate(OnLocationChangedListener onLocationChangedListener) {
@@ -883,37 +882,38 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
 
-        //Récupération de la position du joueur
+        //Recuperation of player's position
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        //Met à jour la localisation dans le listener
+        //Update localisation listener
         if (mMapLocationListener != null) {
             mMapLocationListener.onLocationChanged(location);
         }
 
-        //Options du marqueur du joueur
+        //Player's maker options
         MarkerOptions markerOptions = new MarkerOptions();
 
-        //Si le marqueur n'existe pas encore
+        //If the marker does not exist yet
         if(myPositionMarker==null) {
 
-            //Déclaration des options du marqueur du joueur et création de celui-ci
+            //Declaration and creation of player's marker options
             myPositionMarker = mMap.addMarker(
                     new MarkerOptions().flat(true)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.pepito))
                             .anchor(0.5f, 0.5f)
                             .position(new LatLng(location.getLatitude(), location.getLongitude())));
         }
-        //Mise à jour animée de la position du marqueur joueur
+
+        //Update player's marker position
         else{
             Animation.animateMarker(latLng, myPositionMarker, false, mMap);
         }
 
-        //Mise à jour animée de la camera pointant sur la google map
+        //Update google map camera animation
         CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
-        //Création de nouveaux Nachomons et d'Items
+        //Create new Nachos and Item
         Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
         if (System.currentTimeMillis() > NachosGenerator.generationTimer) {
             Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
@@ -923,7 +923,7 @@ public class MapsActivity extends FragmentActivity implements
             Marker mItem = placeItemMarker(newItem);
             mapMarkerItems.put(mItem, newItem);
 
-            //Vérification des timeout des nachos déjà présents
+            //verify existing Nachos timeouts
             for (Iterator<Map.Entry<Marker, Nachos>> iterator = mapMarker.entrySet().iterator(); iterator.hasNext(); )
             {
                 Map.Entry<Marker, Nachos> entry = iterator.next();
@@ -936,7 +936,7 @@ public class MapsActivity extends FragmentActivity implements
                 }
             }
 
-            //Vérification des timeout des items déjà présents
+            //verify existing Items timeouts
             for (Iterator<Map.Entry<Marker, Item>> iterator = mapMarkerItems.entrySet().iterator(); iterator.hasNext(); )
             {
                 Map.Entry<Marker, Item> entry = iterator.next();
@@ -951,21 +951,21 @@ public class MapsActivity extends FragmentActivity implements
         }
     }
 
-
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        //Deux mode de calibrage de la boussoles
+        //Compass calibrations (two ways)
         if(depreciatedOrientation){
             if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
 
-                //Mises à jour du marqueur du joueur et de la camera
+                //Update player's marker and camera
                 updateRotationPlayerMarker(event.values[0], 1);
                 updateRotationCamera(event.values[0], 10);
             }
         }
         else{
-            //Selon le Sensor déclenché récupère ses données
+
+            //Recuperation of data depending of sensor
             switch (event.sensor.getType()){
                 case Sensor.TYPE_ACCELEROMETER:
                     System.arraycopy(event.values, 0, gravityData, 0, 3);
@@ -979,7 +979,7 @@ public class MapsActivity extends FragmentActivity implements
                     return;
             }
 
-            //Si l'acceleromètre et le magnétomètre fournissent tous les deux des informations
+            //If the accelerometer et magnetometer give both infos...
             if (hasGravityData && hasGeomagneticData) {
                 float identityMatrix[] = new float[9];
                 float rotationMatrix[] = new float[9];
@@ -989,14 +989,14 @@ public class MapsActivity extends FragmentActivity implements
                     float orientationMatrix[] = new float[3];
                     SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, rotationMatrix);
 
-                    //Récupération de l'azimuth permettant de faire fonctionner la boussole
+                    //Recuperation of the azimuth which makes the compass work
                     SensorManager.getOrientation(rotationMatrix, orientationMatrix);
                     float rotationInRadians = orientationMatrix[0];
                     rotationInDegrees = (float)(Math.toDegrees(rotationInRadians)+360)%360;
 
                     Log.d("test", Double.toString(rotationInDegrees));
 
-                    //Mises à jour du marqueur du joueur et de la camera
+                    //update player's marker and camera
                     updateRotationPlayerMarker((float)rotationInDegrees, 30);
                     updateRotationCamera((float)rotationInDegrees, 10);
 
@@ -1011,38 +1011,44 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     /**
-     * Mise à jour de l'angle de la camera pointant sur la Google Map
+     * Updates Google Map's angle camera
+     *
      * @param bearing angle
-     * @param precision différence minimum d'angle avant trigger
+     * @param precision minimum angle difference before trigger
      */
     private void updateRotationCamera(float bearing, int precision) {
 
-        //Si la map a été initialisée et qu'une positiona déjà été trouvée
-        if(mMap != null && latLng != null){
-            //Si l'angle est suffisement différent de celui actuel
+        //If map already initialized or a position already exists...
+        if(mMap != null && latLng != null)
+        {
+            //If angle is different from actual position
             if(Math.abs(currentBearing - bearing) > precision){
-                //Mise à jour de la camera avec animation
+
+                //Update camera with animation
                 CameraPosition currentPlace = new CameraPosition.Builder().target(latLng).bearing(bearing).zoom(18f).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(currentPlace));
             }
         }
-        //Sauvegarde du nouvel angle
-        currentBearing = bearing;
 
+        //Save new angle
+        currentBearing = bearing;
     }
 
     /**
-     * Mise à jour de l'angle du marqueur du joueur sur la Google Map
+     * Updates user's marker
+     *
      * @param bearing angle
-     * @param precision différence minimum d'angle avant trigger
+     * @param precision minimum angle difference before trigger
      */
     private void updateRotationPlayerMarker(float bearing, int precision) {
 
-        //Si le marqueur a déjà été initialisé et la différence avec l'angle actuel est assez grande
+        //If user's marker already initialized and angle difference is big enough...
         if(myPositionMarker != null && Math.abs(myPositionMarker.getRotation()-bearing) > precision){
-            //Si le temps écoulé depuis la dernière rotation est suffisant
+
+            //If time has passed enough since last rotation...
             if(SystemClock.uptimeMillis() - lastPlayerRotation > 1000){
-                //Mise à jour du marqueur avec animation
+
+                //Update marker with animation
                 Animation.rotateMarker(myPositionMarker, bearing);
                 lastPlayerRotation = SystemClock.uptimeMillis();
             }
@@ -1050,9 +1056,10 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     /**
-     * Place un nouveau marqueur pour l'item donné en paramètre sur la Google Map
-     * @param item Item a placer sur la Map
-     * @return Marker de l'Item donné
+     * Puts a new given item marker on the map
+     *
+     * @param item item to put on map
+     * @return givan item marker
      */
     public Marker placeItemMarker(Item item) {
         Marker mItem = mMap.addMarker(new MarkerOptions()
@@ -1062,9 +1069,10 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     /**
-     * Place un nouveau marqueur pour le Nachomon donné en paramètre sur la Google Map
-     * @param nachos Nachomon a placer sur la Map
-     * @return Marker du Nachomon donné
+     * Puts a new given nachos marker on the map
+     *
+     * @param nachos nachos to put on map
+     * @return given nachos marker
      */
     public Marker placeMarker(Nachos nachos) {
         Marker mNachos = mMap.addMarker(new MarkerOptions()
@@ -1081,7 +1089,8 @@ public class MapsActivity extends FragmentActivity implements
                 buttonList.get(i).setVisibility(View.VISIBLE);
                 progressBarList.get(i).setVisibility(View.VISIBLE);
             }
-            //Cache les emplacements vides de l'équipe
+
+            //Hide empty team emplacements
             else {
                 buttonList.get(i).setVisibility(View.INVISIBLE);
                 progressBarList.get(i).setVisibility(View.INVISIBLE);

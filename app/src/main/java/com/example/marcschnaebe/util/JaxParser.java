@@ -11,13 +11,25 @@ import java.util.ArrayList;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-/**
- * Created by christop.hirschi on 03.11.2017.
- */
 
+/**
+ * JAX Parser class
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class JaxParser {
+    /* -------  Attributes  ------ */
+
     ArrayList<Object> listObjects = new ArrayList<>();
 
+    /* -------  Constructor ------- */
+
+    /**
+     * Constructor
+     *
+     * @param stream input stream
+     */
     public JaxParser(InputStream stream)
     {
         try
@@ -38,7 +50,8 @@ public class JaxParser {
         }
     }
 
-    //Retourne la liste des nachos
+    /* -------  Getter & Setter  ------ */
+
     public ArrayList<Object> getObjects()
     {
         return listObjects;

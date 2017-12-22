@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by marc.schnaebe on 21.10.2017.
- */
 
+/**
+ * Items generator class
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class ItemsGenerator {
 
     /* -------  Consts  ------ */
@@ -74,28 +77,30 @@ public class ItemsGenerator {
         itemList.add(upgradeWaterMap);
     }
 
+    /* -------  Methods ------- */
+
     /**
-     * Creates a new Nachos.
+     * Creates a new Nachos
      *
-     * @param myPositionMarker Marqueur de la position du joueur
-     * @return new Item
+     * @param myPositionMarker position of player's marker
+     * @return new item
      */
     public static Item addNewItem(Marker myPositionMarker) {
 
-        //On récupère une liste d'un item au hasard
+        //Recuperation of randomly chosen items list
         Map<String, String> mapItems = itemList.get(Util.randomInteger(0, itemList.size()-1));
 
         double latitude = 0;
         double longitude = 0;
 
-        //On choisit une position au hasard d'après la position du joueur
+        //Choose random position from player's one
         if(myPositionMarker != null){
             LatLng position = myPositionMarker.getPosition();
             latitude = Util.randomDouble(position.latitude - 0.0015, position.latitude + 0.0015);
             longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
         }
 
-        //Attributs
+        //Attributes
         String name = mapItems.get("name");
         String type = mapItems.get("type");
         int upgradePoints = Integer.parseInt(mapItems.get("points"));

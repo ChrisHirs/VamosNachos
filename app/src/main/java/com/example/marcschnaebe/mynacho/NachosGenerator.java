@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.marcschnaebe.mynacho.R.drawable.mustaupicos;
 
 /**
- * Created by christop.hirschi on 11.10.2017.
+ * Nachos generator class
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
  */
-
 public class NachosGenerator {
 
     /* -------  Consts  ------ */
@@ -74,39 +75,39 @@ public class NachosGenerator {
     /* -------  Methods ------- */
 
     /**
-     * Creates a new Nachos.
+     * Creates a new Nachos
      *
-     * @param myPositionMarker Marqueur de la position du joueur
-     * @param meanLevel Niveau moyen de l'équipe
-     * @return new Nachos
+     * @param myPositionMarker player's position marker
+     * @param meanLevel mean level of team
+     * @return new nachos
      */
     public static Nachos addNewWildNachos(Marker myPositionMarker, double meanLevel) {
 
-        //On récupère une liste d'un nachos au hasard
+        //Recuperation of randomly chosen nachos list
         Map<String, String> mapNachos = nachosList.get(Util.randomInteger(0, nachosList.size()-1));
 
         double latitude = 0;
         double longitude = 0;
 
-        //On choisit une position au hasard d'après la position du joueur
+        //Choose random position from player's one
         if(myPositionMarker != null){
             LatLng position = myPositionMarker.getPosition();
             latitude = Util.randomDouble(position.latitude - 0.0015, position.latitude + 0.0015);
             longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
         }
 
-        //Niveau d'après les Nachomons déjà présents dans l'équipe
+        //Level depending on existing team Nachos
         int level = (int) meanLevel + Util.randomInteger(-2, 2);
         level = (level > 0) ? level : 1;
 
-        //Attributs
+        //Attributes
         String name = mapNachos.get("name");
         String type = mapNachos.get("type");
         int hp = Integer.parseInt(mapNachos.get("health-points"));
         int ap = Integer.parseInt(mapNachos.get("attack-points"));
 
-        //Timer avant la prochaine génération
-        long millis = (long) Util.randomInteger(5, 8) * 1000; //Entre 25 sec. à 45 sec.
+        //Generation timer
+        long millis = (long) Util.randomInteger(5, 8) * 1000; //Between 5 sec. and 8 sec.
         generationTimer = System.currentTimeMillis() + millis;
 
         return new Nachos(latitude, longitude, name, type, hp, ap, level);
@@ -114,10 +115,10 @@ public class NachosGenerator {
     }
 
     /**
-     * Creates a new Nachos based on a strin.
+     * Creates a new nachos based on a string
      *
-     * @param stringNachos Nom du Nachos à créer
-     * @return new Nachos
+     * @param stringNachos Name of nachos
+     * @return new nachos
      */
     public static Nachos AddNewSpecificNachos (String stringNachos) {
         String name = "";
@@ -127,7 +128,7 @@ public class NachosGenerator {
 
         for (Map<String, String> list : nachosList) {
             if (list.get("name").equals(stringNachos)) {
-                //Attributs
+                //Attributes
                 name = list.get("name");
                 type = list.get("type");
                 hp = Integer.parseInt(list.get("health-points"));

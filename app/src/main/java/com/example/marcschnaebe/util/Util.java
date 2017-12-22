@@ -12,18 +12,21 @@ import com.example.marcschnaebe.mynacho.R;
 
 import java.util.Random;
 
-/**
- * Created by christop.hirschi on 11.10.2017.
- */
 
+/**
+ * Utils class
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class Util {
 
     /**
-     * Integer aléatoire
+     * Random integer
      *
-     * @param min nombre minimum
-     * @param max nombre maximum
-     * @return nombre aléatoire int
+     * @param min minimum number
+     * @param max maximum number
+     * @return random number int
      */
     static Random random = new Random(System.nanoTime());
 
@@ -33,31 +36,31 @@ public class Util {
     }
 
     /**
-     * Double aléatoire
+     * Random double
      *
-     * @param min nombre minimum
-     * @param max nombre maximum
-     * @return nombre aléatoire double
+     * @param min minimum number
+     * @param max maximum number
+     * @return random number double
      */
     public static double randomDouble(double min, double max) {
         return min + random.nextDouble() * (max - min);
     }
 
     public static void showSnackBar (String text, View view) {
-        //Obtention de la largeur du layout du bas
+        //Get bottom layout width
         int layoutBottomWidth = view.findViewById(R.id.layout_bottom_menu).getWidth();
 
-        //Création du snackbar avec la librairie TSnackbar
+        //Create snackbar with TSnackbar library
         TSnackbar snackBar = TSnackbar.make(view, text, TSnackbar.LENGTH_LONG);
 
-        //largeur du snackbar
+        //Snackbar width
         snackBar.setMaxWidth(layoutBottomWidth);
 
-        //Couleur du snackbar
+        //Snackbar color
         View sView = snackBar.getView();
         sView.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.colorAccent));
 
-        //Texte centré
+        //Centered text
         TextView mainTextView = (TextView) (snackBar.getView()).findViewById(android.support.design.R.id.snackbar_text);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
             mainTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);

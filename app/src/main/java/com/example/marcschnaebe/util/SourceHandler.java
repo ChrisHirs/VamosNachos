@@ -10,20 +10,34 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
 
-import static android.R.attr.level;
 import static java.lang.Integer.parseInt;
 
-/**
- * Created by christop.hirschi on 03.11.2017.
- */
 
+/**
+ * Source handler class
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class SourceHandler extends DefaultHandler {
+
+    /* -------  Attributes  ------ */
+
     ArrayList<Object> listObjects = new ArrayList<>();
 
-    public SourceHandler(ArrayList<Object> nachos)
+    /* -------  Constructor ------- */
+
+    /**
+     * Constructor
+     *
+     * @param listObj list of objects
+     */
+    public SourceHandler(ArrayList<Object> listObj)
     {
-        this.listObjects = nachos;
+        this.listObjects = listObj;
     }
+
+    /* -------  Methods ------- */
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException
@@ -35,7 +49,6 @@ public class SourceHandler extends DefaultHandler {
     public void endDocument() throws SAXException
     {
         super.endDocument();
-        //Log.d("read", "end of document :  " + listObjects.toString());
     }
 
     @Override
@@ -53,7 +66,6 @@ public class SourceHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
-        //Log.d("read", "Dealing with element " + qName);
         if (qName.equalsIgnoreCase("nachos"))
         {
             String type = attributes.getValue("type");

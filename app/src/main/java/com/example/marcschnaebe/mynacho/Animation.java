@@ -12,16 +12,28 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+
 /**
- * Created by anthony.fleury on 12.10.2017.
+ * Animations methods for the player's marker.
+ * Found on : https://stackoverflow.com/questions/28967821/animate-the-rotation-of-the-marker-in-google-map-v2
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
  */
-
-//Found on : https://stackoverflow.com/questions/28967821/animate-the-rotation-of-the-marker-in-google-map-v2
-
 public class Animation {
+
+    /* -------  Attributes  ------ */
 
     private static boolean isMarkerRotating = false;
 
+    /* -------  Methods ------- */
+
+    /**
+     * Rotate player's marker
+     *
+     * @param marker marker to rotate
+     * @param toRotation rotation degree
+     */
     public static void rotateMarker(final Marker marker, final float toRotation) {
         if(!isMarkerRotating){
             final Handler handler = new Handler();
@@ -52,14 +64,20 @@ public class Animation {
 
     }
 
-
-    //Found on : https://stackoverflow.com/questions/21403496/how-to-get-current-location-in-google-map-android
-
-    public static void animateMarker(final LatLng toPosition, final Marker m, final boolean hideMarke, GoogleMap googleMap) {
+    /**
+     * Animate given marker.
+     * Found on : https://stackoverflow.com/questions/21403496/how-to-get-current-location-in-google-map-android
+     *
+     * @param toPosition marker's position
+     * @param marker marker to animate
+     * @param hideMarker hide marker or not
+     * @param googleMap google map on which the marker is shown
+     */
+    public static void animateMarker(final LatLng toPosition, final Marker marker, final boolean hideMarker, GoogleMap googleMap) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
-        Point startPoint = proj.toScreenLocation(m.getPosition());
+        Point startPoint = proj.toScreenLocation(marker.getPosition());
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
         final long duration = 1500;
 
@@ -75,16 +93,16 @@ public class Animation {
                         * startLatLng.longitude;
                 double lat = t * toPosition.latitude + (1 - t)
                         * startLatLng.latitude;
-                m.setPosition(new LatLng(lat, lng));
+                marker.setPosition(new LatLng(lat, lng));
 
                 if (t < 1.0) {
                     // Post again 16ms later.
                     handler.postDelayed(this, 16);
                 } else {
-                    if (hideMarke) {
-                        m.setVisible(false);
+                    if (hideMarker) {
+                        marker.setVisible(false);
                     } else {
-                        m.setVisible(true);
+                        marker.setVisible(true);
                     }
                 }
             }

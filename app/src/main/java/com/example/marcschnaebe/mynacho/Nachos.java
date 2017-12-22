@@ -5,10 +5,13 @@ import android.util.Log;
 import com.example.marcschnaebe.util.Util;
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by christop.hirschi on 11.10.2017.
- */
 
+/**
+ * Nachos class containing attributes and getters/setters
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class Nachos {
 
     /* -------  Attributes  ------ */
@@ -32,6 +35,17 @@ public class Nachos {
 
     /* -------  Constructor ------- */
 
+    /**
+     * Constructor
+     *
+     * @param latitude latitude on google map
+     * @param longitude longitude on google map
+     * @param _name name of nachos
+     * @param _type type of nachos
+     * @param _hp health points of nachos
+     * @param _ap attack points of nachos
+     * @param _level level of nachos
+     */
     public Nachos(double latitude, double longitude, String _name, String _type, int _hp, int _ap, int _level) {
 
         createdTime = System.currentTimeMillis();
@@ -53,6 +67,21 @@ public class Nachos {
 
     }
 
+    /**
+     * Constructor
+     *
+     * @param _position position on google map
+     * @param _name name of nachos
+     * @param _type type of nachos
+     * @param _level level of nachos
+     * @param _xpCurrent current experience of nachos
+     * @param _xpMax maximum experience of nachos
+     * @param _ap attack points of nachos
+     * @param _hpCurrent current health points of nachos
+     * @param _hpMax maximum health points of nachos
+     * @param _hpBonus health points bonus
+     * @param _apBonus attack points bonus
+     */
     public Nachos(LatLng _position, String _name, String _type, int _level, int _xpCurrent,
                   int _xpMax, int _ap, int _hpCurrent, int _hpMax, int _hpBonus, int _apBonus) {
 
@@ -76,6 +105,9 @@ public class Nachos {
 
     /* -------  Methods ------- */
 
+    /**
+     * Modifies attributes when nachos has leveled up
+     */
     public void leveledUp () {
 
         level++;
@@ -88,10 +120,18 @@ public class Nachos {
 
     }
 
+    /**
+     * Heals nachos to maximum health
+     */
     public void healNachosToMax() {
         hpCurrent = hpMax;
     }
 
+    /**
+     * Adds health points to current health points
+     *
+     * @param hp health points to add
+     */
     public void addToCurrentHp(int hp){
         if((hpCurrent + hp) <= hpMax){
             hpCurrent += hp;
@@ -101,6 +141,12 @@ public class Nachos {
         }
     }
 
+    /**
+     * Adds experience points to current experience points
+     *
+     * @param xp experience points to add
+     * @return True if nachos has leveled up, otherwise False boolean
+     */
     public boolean addToCurrentXp(int xp) {
         boolean hasLeveledUp = false;
         xpCurrent += xp;
@@ -117,62 +163,86 @@ public class Nachos {
         return hasLeveledUp;
     }
 
+    /**
+     * Adds defensive points to current defensive points
+     *
+     * @param upgrade upgrading points to add
+     */
     public void addDef(int upgrade) {
         hpCurrent += upgrade;
         hpMax += upgrade;
         hpBonus += 1;
     }
 
+    /**
+     * Adds offensive points to current offensive points
+     *
+     * @param upgrade upgrading points to add
+     */
     public void addAttack(int upgrade) {
         ap += upgrade;
         apBonus += 1;
     }
 
+    /**
+     * Gives experience points based on enemy killed
+     *
+     * @param enemy nachos killed
+     * @return potential experience points int
+     */
     public int calcWinnableExperience(Nachos enemy){
         int potentialXP = 5;
 
         float diffLevel = (enemy.getLevel() - this.level);
 
-        // Moins d'XP
+        //Less XP
         if(diffLevel < 0){
             diffLevel = 1/((-diffLevel)+1);
         }
-        // Plus d'XP
+        //More XP
         else if (diffLevel > 0){
             diffLevel += 1;
         }
-        // XP normale
+        //Same XP
         else{
             diffLevel = 1;
         }
 
         potentialXP = (int)(potentialXP * diffLevel);
-
         return potentialXP;
     }
 
+    /**
+     * Tells if a nachos won or loose against enemy nachos
+     *
+     * @param enemy nachos to kill
+     * @return True if nachos won, otherwise False boolean
+     */
     public boolean fightToDeathWith (Nachos enemy) {
         do {
             enemy.setHpCurrent(enemy.getHpCurrent() - ap);
             hpCurrent -= enemy.getAp();
         } while ( (hpCurrent > 0) && (enemy.getHpCurrent() > 0) );
 
-        //Du lourd
+        //Log
         Log.d("Combat", name + "(" + ap + ")" + " LVL: " + level + " PV: " + hpCurrent + "/" +
                 hpMax + " XP: " + xpCurrent + "/" + xpMax + " -vs- " +
                 enemy.getName() + "(" + enemy.getAp() + ")" + " LVL: " + enemy.getLevel() +
                 " PV: " + enemy.getHpCurrent() + "/" + enemy.getHpMax() + " XP: " +
                 enemy.getXpCurrent() + "/" + enemy.getXpMax());
 
-        // Victoire
+        //Victory
         if (hpCurrent <= 0) {
             return false;
         }
-        // Défaite
+
+        //Defeat
         else {
             return true;
         }
     }
+
+    /* -------  Getter & Setter  ------ */
 
     public int getHpPercent() {
         double percent = (double) hpCurrent/ (double) hpMax * 100.;
@@ -185,8 +255,6 @@ public class Nachos {
     }
 
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
-
-    /* -------  Getter & Setter  ------ */
 
     public String getName() {
         return name;

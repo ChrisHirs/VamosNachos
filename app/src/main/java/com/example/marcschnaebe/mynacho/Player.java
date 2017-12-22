@@ -4,10 +4,13 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 
-/**
- * Created by anthony.fleury on 20.10.2017.
- */
 
+/**
+ * Player class containing attributs and methods
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class Player {
 
     /* -------  Consts  ------ */
@@ -19,7 +22,6 @@ public class Player {
 
     private Nachos target = null;
     private Item targetItem = null;
-
     private Marker marker;
 
     public ArrayList<Nachos> team = new ArrayList<Nachos>();
@@ -27,12 +29,22 @@ public class Player {
 
     /* -------  Constructor ------- */
 
+    /**
+     * Constructor
+     *
+     * @param myMarker player's marker
+     */
      public Player(Marker myMarker){
          marker = myMarker;
      }
 
      /* -------  Methods ------- */
 
+    /**
+     * Returns mean level of existing nachos team
+     *
+     * @return mean level, otherwise 1 double
+     */
     public double getMeanLevelTeam() {
         double sum = 0.;
 

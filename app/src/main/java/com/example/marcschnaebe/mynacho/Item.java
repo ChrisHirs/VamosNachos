@@ -2,11 +2,16 @@ package com.example.marcschnaebe.mynacho;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by marc.schnaebe on 21.10.2017.
- */
 
+/**
+ * Item class containing attributes and getters/setters
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class Item {
+
+    /* -------  Attributes  ------ */
 
     public long createdTime = 0L;
     private LatLng position;
@@ -14,6 +19,17 @@ public class Item {
     private String type;
     private int upgradePoints;
 
+    /* -------  Constructor ------- */
+
+    /**
+     * Constructor
+     *
+     * @param latitude latitude on google map
+     * @param longitude longitude on google map
+     * @param _name name of item
+     * @param _upgradePoints points of item
+     * @param _type type of item
+     */
     public Item(double latitude, double longitude, String _name, int _upgradePoints, String _type) {
 
         createdTime = System.currentTimeMillis();
@@ -24,6 +40,14 @@ public class Item {
 
     }
 
+    /**
+     * Constructor
+     *
+     * @param _position position on google map
+     * @param _name name of item
+     * @param _type type of item
+     * @param _upgradePoints points of item
+     */
     public Item (LatLng _position, String _name, String _type, int _upgradePoints) {
 
         createdTime = System.currentTimeMillis();
@@ -33,6 +57,8 @@ public class Item {
         type = _type;
 
     }
+
+    /* -------  Getter & Setter  ------ */
 
     public String getPositionToString() { return "Latitude: " + position.latitude + " Longitude: " + position.longitude; }
 

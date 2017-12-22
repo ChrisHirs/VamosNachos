@@ -15,23 +15,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by anthony.fleury on 27.10.2017.
- */
 
+/**
+ * Create and generate a grid view containing nachos
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
+ */
 public class TeamAdapter extends BaseAdapter {
 
     private ArrayList<Nachos> mData = new ArrayList<Nachos>();
     private LayoutInflater mInflater;
     private Context context;
 
+    /**
+     * Constructor
+     *
+     * @param _context application context
+     * @param list list of nachos
+     */
     public TeamAdapter(Context _context, ArrayList<Nachos> list) {
         context = _context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mData = list;
     }
-
-
 
     @Override
     public int getCount() {
@@ -79,6 +86,9 @@ public class TeamAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Internal class that contains view elements to display
+     */
     public static class ViewHolder {
         public TextView nachosName;
         public TextView nachosLevel;

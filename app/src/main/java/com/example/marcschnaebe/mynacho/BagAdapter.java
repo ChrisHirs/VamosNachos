@@ -5,48 +5,41 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
 
 /**
- * Created by anthony.fleury on 27.10.2017.
+ * Create and generate a grid view containing items
+ *
+ * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
+ * @version 12.2017
  */
-
 public class BagAdapter extends BaseAdapter {
+
+    /* -------  Attributes  ------ */
 
     private ArrayList<Item> mData = new ArrayList<Item>();
     private LayoutInflater mInflater;
     private Context context;
 
+    /* -------  Constructor ------- */
+
+    /**
+     * Constructor
+     *
+     * @param _context application context
+     * @param list list of items
+     */
     public BagAdapter(Context _context, ArrayList<Item> list) {
         context = _context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mData = list;
     }
 
-
-    @Override
-    public int getCount() {
-        return mData.size();
-    }
-
-    @Override
-    public Item getItem(int position) {
-        return mData.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    /* -------  Getter & Setter  ------ */
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -68,6 +61,26 @@ public class BagAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public int getCount() {
+        return mData.size();
+    }
+
+    @Override
+    public Item getItem(int position) {
+        return mData.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    /* -------  Internal Class  ------ */
+
+    /**
+     * Internal class that contains view elements to display
+     */
     public static class ViewHolder {
 
         public ImageView imageItem;
