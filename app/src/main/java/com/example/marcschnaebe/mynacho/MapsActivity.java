@@ -94,6 +94,8 @@ public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
         SensorEventListener{
 
+    /* -------  Attributes  ------ */
+
     //API
     private GoogleApiClient mGoogleApiClient;
 
@@ -132,9 +134,6 @@ public class MapsActivity extends FragmentActivity implements
     //Compass used sensors types (true = depreciated)
     private boolean depreciatedOrientation = false;
 
-    //Permission code
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
     //Player
     private Player player = new Player(myPositionMarker);
 
@@ -148,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements
 
     private ImageButton buttonBag;
 
-    Item chosenItem=null;
+    private Item chosenItem = null;
 
     //Nachos
     private Button buttonDeath;
@@ -171,12 +170,19 @@ public class MapsActivity extends FragmentActivity implements
 
     private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
 
+    /* -------  Consts  ------ */
+
+    //Permission code
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     //Localisation parameters
     private static final LocationRequest REQUEST = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(2000)
             .setFastestInterval(1000)
             .setSmallestDisplacement(0);
+
+    /* -------  Methods ------- */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -762,7 +768,7 @@ public class MapsActivity extends FragmentActivity implements
         Log.d("test", "Connecté");
 
         //Verify user's access permission to localisation
-        if (checkLocationPermission()) {
+        if (Util.checkLocationPermission(this)) {
 
             Log.d("test", "Connecté - Permissions accordées");
 
@@ -783,60 +789,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         Log.d("test", "Connexion échouée");
-    }
-
-
-    /**
-     * Verify user's localisation access permissions and ask them otherwise
-     *
-     * @return boolean True if authorized permissions, otherwise False
-     */
-    public boolean checkLocationPermission() {
-
-        Log.d("test", "CheckLocationPermission");
-
-        //If they are not authorized...
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            Log.d("test", "CheckLocationPermission - Passage compliqué");
-
-            //If one permission is needed...
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                Log.d("test", "CheckLocationPermission - Doit donner infos");
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
-                        .setTitle("Localisation required")
-                        .setMessage("This application needs an access to your localisation to work properly.")
-                        .setPositiveButton("OK patrick", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-            //If none is needed...
-            else {
-
-                Log.d("test", "CheckLocationPermission - Demande de la permission");
-
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        }
-
-        //If permissions are already authorized...
-        else {
-            Log.d("test", "CheckLocationPermission - Passe direct");
-            return true;
-        }
     }
 
     @Override
@@ -1081,6 +1033,12 @@ public class MapsActivity extends FragmentActivity implements
         return mNachos;
     }
 
+    /**
+     * Updates the display showing team infos at the bottom of the screen
+     *
+     * @param buttonList list of imagebuttons
+     * @param progressBarList list of progressbar
+     */
     public void updateDisplayInfoTeam(ArrayList<ImageButton> buttonList, ArrayList<ProgressBar> progressBarList){
         for (int i = 0; i < Player.getMaxTeamSize(); i++) {
             if (i < player.team.size()) {
@@ -1099,6 +1057,9 @@ public class MapsActivity extends FragmentActivity implements
         }
     }
 
+    /**
+     * Shows a dialog when no nachos in team
+     */
     public void showStarterDialog(){
         if(player.team.isEmpty()){
             StarterDialog starterDialog = new StarterDialog(this);
