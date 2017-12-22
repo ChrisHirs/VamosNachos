@@ -12,11 +12,11 @@ import com.google.android.gms.maps.model.LatLng;
  * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
  * @version 12.2017
  */
-public class Nachos {
+public class Nachos implements Markable {
 
     /* -------  Attributes  ------ */
 
-    public long createdTime = 0L;
+    public long createdTime;
     private LatLng position;
 
     private String name;

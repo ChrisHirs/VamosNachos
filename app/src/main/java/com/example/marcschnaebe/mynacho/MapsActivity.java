@@ -16,7 +16,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -32,7 +31,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
-import com.example.marcschnaebe.util.JaxParser;
 import com.example.marcschnaebe.util.PermissionHandler;
 import com.example.marcschnaebe.util.Util;
 import com.example.marcschnaebe.util.XMLHandler;
@@ -55,32 +53,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import static com.example.marcschnaebe.mynacho.R.id.map;
-import static com.example.marcschnaebe.util.XMLHandler.populateFromXMLFile;
+
 
 /**
  * Main activity containing stuff related to Google Map and whatnot
@@ -162,7 +143,6 @@ public class MapsActivity extends FragmentActivity implements
     private LinearLayout layoutInfo;
 
     private ViewFlipper viewFlipper;
-    private ListView listViewTeam;
     private TeamAdapter teamAdapter;
 
     private GridView gridViewBag;
@@ -171,9 +151,12 @@ public class MapsActivity extends FragmentActivity implements
     private ArrayList<ImageButton> buttonListBottomTeamNachos = new ArrayList<>();
     private ArrayList<ProgressBar> progressBarListBottomTeamNachos = new ArrayList<>();
 
-    private HashMap<Marker, Nachos> mapMarker = new HashMap<Marker, Nachos>();
+    private HashMap<Marker, Nachos> mapMarkerNachos = new HashMap<Marker, Nachos>();
 
     /* -------  Consts  ------ */
+
+    //Minimal distance to catch a nachos or item
+    private int minDist = 40 ;
 
     //Permission code
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -376,7 +359,7 @@ public class MapsActivity extends FragmentActivity implements
 
 
         // ------------------------------
-        //       TEAM BUTTONS HANDLING
+        //       TEAM BOTTOM BUTTONS HANDLING
         // ------------------------------
 
         for (i = 0; i < buttonListBottomTeamNachos.size(); i++) {
@@ -454,7 +437,7 @@ public class MapsActivity extends FragmentActivity implements
                     if (player.getTarget() != null) {
                         player.setTarget(null);
                         targetMarker.remove();
-                        mapMarker.remove(targetMarker);
+                        mapMarkerNachos.remove(targetMarker);
                         layoutInfo.setVisibility(LinearLayout.GONE);
                     }
 
@@ -589,61 +572,54 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public boolean onMarkerClick(Marker marker) {
                 targetMarker = marker;
-                Nachos nachos = mapMarker.get(marker);
-                player.setTarget(nachos);
 
+                LatLng myPosition = myPositionMarker.getPosition();
+                LatLng objectPosition = marker.getPosition();
+
+                float[] results = new float[3];
+                double startLatitude = myPosition.latitude;
+                double startLongitude = myPosition.longitude;
+                double endLatitude = objectPosition.latitude;
+                double endLongitude = objectPosition.longitude;
+                Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+
+                //TODO : Rather deactivate player's marker touchability and use one 'if / else' than a 'if / else if'
+                Nachos nachos = mapMarkerNachos.get(marker);
                 Item items = mapMarkerItems.get(marker);
-                player.setItemsTarget(items);
 
+                //Nachos
                 if (nachos != null && myPositionMarker != null) {
-                    LatLng myPosition = myPositionMarker.getPosition();
-                    LatLng nachosPosition = nachos.getPosition();
-
-                    float[] results = new float[3];
-                    double startLatitude = myPosition.latitude;
-                    double startLongitude = myPosition.longitude;
-                    double endLatitude = nachosPosition.latitude;
-                    double endLongitude = nachosPosition.longitude;
-                    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
+                    player.setTarget(nachos);
 
                     layoutItemsInfo.setVisibility(LinearLayout.GONE);
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);
                     textInfo.setText("Name: " + nachos.getName() + " Type: " + nachos.getType() + " HP: " + nachos.getHpCurrent() + "/" + nachos.getHpMax() + " LVL: " + nachos.getLevel());
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
-                    if (results[0] < 40) { //400
+                    if (results[0] < minDist) { //400
                         buttonDeath.setEnabled(true);
                         Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
-                        if(player.team.size() < Player.getMaxTeamSize()){
+                        if (player.team.size() < Player.getMaxTeamSize()) {
                             buttonCapture.setEnabled(true);
-                        }
-                        else{
+                        } else {
                             buttonCapture.setEnabled(false);
                         }
 
-                    }
-                    else {
+                    } else {
                         buttonDeath.setEnabled(false);
                         buttonCapture.setEnabled(false);
                     }
                 }
 
-                if (items != null && myPositionMarker != null) {
-                    LatLng myPosition = myPositionMarker.getPosition();
-                    LatLng itemsPosition = items.getPosition();
+                //Items
+                else if (items != null && myPositionMarker != null) {
+                    player.setItemsTarget(items);
 
-                    float[] results = new float[3];
-                    double startLatitude = myPosition.latitude;
-                    double startLongitude = myPosition.longitude;
-                    double endLatitude = itemsPosition.latitude;
-                    double endLongitude = itemsPosition.longitude;
-                    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, results);
-
-                    layoutInfo.setVisibility(LinearLayout.GONE);
                     layoutItemsInfo.setVisibility(LinearLayout.VISIBLE);
+                    layoutInfo.setVisibility(LinearLayout.GONE);
                     textItemsInfo.setText("Nom: " + items.getName() + " Type: " + items.getType());
                     imageItemsInfo.setImageResource(getResources().getIdentifier(items.getName().toLowerCase(), "drawable", getPackageName()));
 
-                    if (results[0] < 40) { //400
+                    if (results[0] < minDist) { //400
                         if(player.bag.size() < Player.getMaxBagSize()){
                             buttonTake.setEnabled(true);
                         }
@@ -656,7 +632,7 @@ public class MapsActivity extends FragmentActivity implements
                     }
                 }
 
-                // Event was handled by our code, do not launch default behaviour.
+                //Event was handled by our code, do not launch default behaviour.
                 return true;
             }
         });
@@ -701,9 +677,6 @@ public class MapsActivity extends FragmentActivity implements
         }
     }
 
-    /**
-     * Implementation of {@link LocationListener}.
-     */
     @Override
     public void onLocationChanged(Location location) {
 
@@ -738,42 +711,22 @@ public class MapsActivity extends FragmentActivity implements
         CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
-        //Create new Nachos and Item
         Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
 
+        //TODO : Maybe change this part and put it in a timer callback?
+        //Create new Nachos and Item
         if (System.currentTimeMillis() > NachosGenerator.generationTimer) {
             Nachos newNachos = NachosGenerator.addNewWildNachos(myPositionMarker, player.getMeanLevelTeam());
             Marker mNachos = placeMarker(newNachos);
-            mapMarker.put(mNachos, newNachos);
+            mapMarkerNachos.put(mNachos, newNachos);
+
             Item newItem = ItemsGenerator.addNewItem(myPositionMarker);
-            Marker mItem = placeItemMarker(newItem);
+            Marker mItem = placeMarker(newItem);
             mapMarkerItems.put(mItem, newItem);
 
-            //verify existing Nachos timeouts
-            for (Iterator<Map.Entry<Marker, Nachos>> iterator = mapMarker.entrySet().iterator(); iterator.hasNext(); )
-            {
-                Map.Entry<Marker, Nachos> entry = iterator.next();
-                Marker currentMarker = entry.getKey();
-                Nachos currentNacho = (Nachos) entry.getValue();
-                if (currentNacho.createdTime < (System.currentTimeMillis() - 600000)) { // 10 minutes = 600000 ms
-                    iterator.remove();
-                    currentMarker.remove();
-                    mapMarker.remove(currentMarker);
-                }
-            }
-
-            //verify existing Items timeouts
-            for (Iterator<Map.Entry<Marker, Item>> iterator = mapMarkerItems.entrySet().iterator(); iterator.hasNext(); )
-            {
-                Map.Entry<Marker, Item> entry = iterator.next();
-                Marker currentMarker = entry.getKey();
-                Item currentItem = (Item) entry.getValue();
-                if (currentItem.createdTime < (System.currentTimeMillis() - 12000000)) { // 20 minutes = 12000000 ms
-                    iterator.remove();
-                    currentMarker.remove();
-                    mapMarkerItems.remove(currentMarker);
-                }
-            }
+            //verify existing markable objects timeouts
+            deleteTimedOutObjects(mapMarkerNachos, 600000);
+            deleteTimedOutObjects(mapMarkerItems, 12000000);
         }
     }
 
@@ -825,7 +778,6 @@ public class MapsActivity extends FragmentActivity implements
                     //update player's marker and camera
                     updateRotationPlayerMarker((float)rotationInDegrees, 30);
                     updateRotationCamera((float)rotationInDegrees, 10);
-
                 }
             }
         }
@@ -907,29 +859,40 @@ public class MapsActivity extends FragmentActivity implements
     }
 
     /**
-     * Puts a new given item marker on the map
+     * Verify existing object timeouts and delete them if needed
      *
-     * @param item item to put on map
-     * @return givan item marker
+     * @param mapMarker list of objects
+     * @param timeout time before deletion in ms
+     * @param <T> object implementing markable
      */
-    public Marker placeItemMarker(Item item) {
-        Marker mItem = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(item.getName().toLowerCase(), "drawable", getPackageName())))
-                .position(item.getPosition()));
-        return mItem;
+    public <T extends Markable> void deleteTimedOutObjects(HashMap<Marker, T> mapMarker, long timeout) {
+        Log.d("Generic", "deleteTimedOutObjects");
+        for (Iterator<Map.Entry<Marker, T>> iterator = mapMarker.entrySet().iterator(); iterator.hasNext(); )
+        {
+            Map.Entry<Marker, T> entry = iterator.next();
+            Marker currentMarker = entry.getKey();
+            T currentObj = (T) entry.getValue();
+            if (currentObj.createdTime < (System.currentTimeMillis() - timeout)) {
+                iterator.remove();
+                currentMarker.remove();
+                mapMarker.remove(currentMarker);
+            }
+        }
     }
 
     /**
-     * Puts a new given nachos marker on the map
+     * Puts a new given object marker on the map
      *
-     * @param nachos nachos to put on map
-     * @return given nachos marker
+     * @param object object to put on map
+     * @param <T> object implementing markable
+     * @return given object marker
      */
-    public Marker placeMarker(Nachos nachos) {
-        Marker mNachos = mMap.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName())))
-                .position(nachos.getPosition()));
-        return mNachos;
+    private <T extends Markable > Marker placeMarker(T object) {
+        Log.d("Generic", "placeMarker");
+        Marker marker = mMap.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(object.getName().toLowerCase(), "drawable", getPackageName())))
+                .position(object.getPosition()));
+        return marker;
     }
 
     /**
