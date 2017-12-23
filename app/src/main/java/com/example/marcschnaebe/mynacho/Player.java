@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 /**
- * Player class containing attributs and methods
+ * Player class containing attributes and methods
  *
  * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
  * @version 12.2017
@@ -61,6 +61,7 @@ public class Player {
     /* -------  Getter & Setter  ------ */
 
     public static int getMaxTeamSize(){ return maxTeamSize;}
+
     public static int getMaxBagSize(){ return maxBagSize;}
 
     public Marker getMarker() {

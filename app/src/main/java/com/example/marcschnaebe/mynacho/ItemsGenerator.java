@@ -32,7 +32,7 @@ public class ItemsGenerator {
 
     public static ArrayList<Map> itemList = new ArrayList<Map>();
 
-    /* -------  Initialisateur statique ------ */
+    /* -------  Static Initializer ------ */
 
     static {
         nachoPotionMap.put("name", "Nachopotion");

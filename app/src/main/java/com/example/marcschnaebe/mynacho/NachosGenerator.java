@@ -31,7 +31,7 @@ public class NachosGenerator {
 
     public static ArrayList<Map> nachosList = new ArrayList<Map>();
 
-    /* -------  Initialisateur statique ------ */
+    /* -------  Static Initializer ------ */
 
     static {
         caraponchoMap.put("name", "Caraponcho");
@@ -138,5 +138,4 @@ public class NachosGenerator {
 
         return new Nachos(0.0, 0.0, name, type, hp, ap, 1);
     }
-
 }
