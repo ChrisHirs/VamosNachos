@@ -57,7 +57,6 @@ public class BagAdapter extends BaseAdapter {
         }
 
         holder.imageItem.setImageResource(context.getResources().getIdentifier(mData.get(position).getName().toLowerCase(), "drawable", context.getPackageName()));
-
         return convertView;
     }
 

@@ -213,7 +213,7 @@ public class Nachos implements Markable {
     }
 
     /**
-     * Tells if a nachos won or loose against enemy nachos
+     * Tells if a nachos won or loose against another nachos
      *
      * @param enemy nachos to kill
      * @return True if nachos won, otherwise False boolean

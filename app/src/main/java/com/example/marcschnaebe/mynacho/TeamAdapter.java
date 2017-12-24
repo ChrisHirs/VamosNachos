@@ -37,6 +37,8 @@ public class TeamAdapter extends BaseAdapter {
         mData = list;
     }
 
+    /* -------  Getter & Setter  ------ */
+
     @Override
     public int getCount() {
         return mData.size();
@@ -82,6 +84,8 @@ public class TeamAdapter extends BaseAdapter {
         holder.nachosXP.setProgress(mData.get(position).getXpPercent());
         return convertView;
     }
+
+    /* -------  Internal Class  ------ */
 
     /**
      * Internal class that contains view elements to display

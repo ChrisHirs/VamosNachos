@@ -26,7 +26,7 @@ public class PermissionHandler {
      * Verify user's localisation access permissions and ask them otherwise
      *
      * @param activity activity permissions
-     * @return boolean True if authorized permissions, otherwise False
+     * @return boolean True if authorized permissions, otherwise False boolean
      */
     public static boolean checkLocationPermission(Activity activity) {
         final Activity MyActivity = activity;

@@ -95,7 +95,7 @@ public class Animation {
                 marker.setPosition(new LatLng(lat, lng));
 
                 if (t < 1.0) {
-                    // Post again 16ms later.
+                    //Post again 16ms later.
                     handler.postDelayed(this, 16);
                 } else {
                     if (hideMarker) {

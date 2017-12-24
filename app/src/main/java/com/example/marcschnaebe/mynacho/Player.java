@@ -20,7 +20,7 @@ public class Player {
 
     /* -------  Attributes  ------ */
 
-    private Nachos target = null;
+    private Nachos targetNachos = null;
     private Item targetItem = null;
     private Marker marker;
 
@@ -72,11 +72,11 @@ public class Player {
         this.marker = marker;
     }
 
-    public Nachos getTarget() {
-        return target;
+    public Nachos getTargetNachos() {
+        return targetNachos;
     }
 
-    public void setTarget(Nachos target) { this.target = target; }
+    public void setTargetNachos(Nachos targetNachos) { this.targetNachos = targetNachos; }
 
     public Item getItemsTarget() {
         return targetItem;

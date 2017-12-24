@@ -369,12 +369,12 @@ public class MapsActivity extends FragmentActivity implements
                 @Override
                 public void onClick(View view) {
                     //Capture
-                    if (player.getTarget() != null && isCapturing) {
+                    if (player.getTargetNachos() != null && isCapturing) {
                         chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
-                        if (chosenNachos.fightToDeathWith(player.getTarget())) {
-                            player.getTarget().setHpCurrent(0);
-                            player.team.add(player.getTarget());
+                        if (chosenNachos.fightToDeathWith(player.getTargetNachos())) {
+                            player.getTargetNachos().setHpCurrent(0);
+                            player.team.add(player.getTargetNachos());
                         }
                         else {
                             player.team.remove(index);
@@ -384,11 +384,11 @@ public class MapsActivity extends FragmentActivity implements
                     }
 
                     //Deathmatch
-                    if (player.getTarget() != null && isDeathMatching) {
+                    if (player.getTargetNachos() != null && isDeathMatching) {
                         chosenItem = null;
                         Nachos chosenNachos = player.team.get(index);
-                        if (chosenNachos.fightToDeathWith(player.getTarget())) {
-                            if (chosenNachos.addToCurrentXp(chosenNachos.calcWinnableExperience(player.getTarget()))) {
+                        if (chosenNachos.fightToDeathWith(player.getTargetNachos())) {
+                            if (chosenNachos.addToCurrentXp(chosenNachos.calcWinnableExperience(player.getTargetNachos()))) {
                                 Util.showSnackBar(chosenNachos.getName() + "'s leveled up!", findViewById(android.R.id.content));
                             }
                         }
@@ -434,8 +434,8 @@ public class MapsActivity extends FragmentActivity implements
                     }
 
                     //Target deletion
-                    if (player.getTarget() != null) {
-                        player.setTarget(null);
+                    if (player.getTargetNachos() != null) {
+                        player.setTargetNachos(null);
                         targetMarker.remove();
                         mapMarkerNachos.remove(targetMarker);
                         layoutInfo.setVisibility(LinearLayout.GONE);
@@ -476,7 +476,7 @@ public class MapsActivity extends FragmentActivity implements
 
                 chosenItem = player.bag.get(i);
                 isCapturing = isDeathMatching = false;
-                player.setTarget(null);
+                player.setTargetNachos(null);
 
                 Util.showSnackBar("Choose a Nachomons to apply it!", findViewById(android.R.id.content));
 
@@ -589,7 +589,7 @@ public class MapsActivity extends FragmentActivity implements
 
                 //Nachos
                 if (nachos != null && myPositionMarker != null) {
-                    player.setTarget(nachos);
+                    player.setTargetNachos(nachos);
 
                     layoutItemsInfo.setVisibility(LinearLayout.GONE);
                     layoutInfo.setVisibility(LinearLayout.VISIBLE);

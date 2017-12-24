@@ -40,7 +40,7 @@ public class XMLHandler {
     /* -------  Methods ------- */
 
     /**
-     * Population player's team and bag from an XML file
+     * Populate player's team and bag from an XML file
      *
      * @param file XML file
      * @param player player object

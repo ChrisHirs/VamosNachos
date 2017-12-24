@@ -80,7 +80,7 @@ public class ItemsGenerator {
     /* -------  Methods ------- */
 
     /**
-     * Creates a new Nachos
+     * Creates a new item
      *
      * @param myPositionMarker position of player's marker
      * @return new item

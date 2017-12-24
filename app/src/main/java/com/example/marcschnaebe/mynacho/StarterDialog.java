@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 
 /**
- * Dialog class for starters extending Dialog
+ * Dialog class for starters
  *
  * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
  * @version 12.2017

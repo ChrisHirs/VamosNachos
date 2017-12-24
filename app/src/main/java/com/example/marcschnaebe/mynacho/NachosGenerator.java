@@ -75,7 +75,7 @@ public class NachosGenerator {
     /* -------  Methods ------- */
 
     /**
-     * Creates a new Nachos
+     * Creates a new nachos
      *
      * @param myPositionMarker player's position marker
      * @param meanLevel mean level of team
@@ -96,7 +96,7 @@ public class NachosGenerator {
             longitude = Util.randomDouble(position.longitude - 0.0015, position.longitude + 0.0015);
         }
 
-        //Level depending on existing team Nachos
+        //Level depending on existing team
         int level = (int) meanLevel + Util.randomInteger(-2, 2);
         level = (level > 0) ? level : 1;
 
@@ -117,7 +117,7 @@ public class NachosGenerator {
     /**
      * Creates a new nachos based on a string
      *
-     * @param stringNachos Name of nachos
+     * @param stringNachos name of nachos
      * @return new nachos
      */
     public static Nachos AddNewSpecificNachos (String stringNachos) {
@@ -128,6 +128,7 @@ public class NachosGenerator {
 
         for (Map<String, String> list : nachosList) {
             if (list.get("name").equals(stringNachos)) {
+
                 //Attributes
                 name = list.get("name");
                 type = list.get("type");

@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 
 /**
- * Interface for markable object
+ * Interface for markable object (aka google map markers)
  *
  * @author Fleury Anthony, Hirschi Christophe, Schnaebele Marc
  * @version 12.2017
