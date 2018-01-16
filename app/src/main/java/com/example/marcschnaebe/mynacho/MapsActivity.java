@@ -18,7 +18,6 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -115,9 +114,6 @@ public class MapsActivity extends FragmentActivity implements
     private boolean isCapturing = false;
     private boolean isDeathMatching = false;
 
-    //Compass used sensors types (true = depreciated)
-    private boolean depreciatedOrientation = false;
-
     //Player
     private Player player = new Player(myPositionMarker);
 
@@ -173,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("test", "OnCreate");
+        //Log.d("test", "OnCreate");
 
         // -------------------
         //      MAP / API
@@ -200,21 +196,15 @@ public class MapsActivity extends FragmentActivity implements
         mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
         //Sensors affectations
-        if(depreciatedOrientation){
-            //Depreciated
-            mOrientationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        }
-        else{
-            //Magnetometer et Accelerometer
-            mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            mAcceleroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        }
+        //Magnetometer et Accelerometer
+        mMagneticSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mAcceleroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         //Available sensors list
         List<Sensor> msensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
         //Display number of available sensors
-        Log.d("sensor", Integer.toString(msensorList.size()));
+        //Log.d("sensor", Integer.toString(msensorList.size()));
 
         //Creation of a list of sensors' device
         String sSensList = new String("");
@@ -227,7 +217,7 @@ public class MapsActivity extends FragmentActivity implements
 
         //Display a list if there is at least one sensor
         if (i>0){
-            Log.d("sensor", sSensList);
+            //Log.d("sensor", sSensList);
         }
 
         // -------------------
@@ -320,9 +310,9 @@ public class MapsActivity extends FragmentActivity implements
                 }
 
                 for(int i=0; i<player.bag.size(); i++){
-                    Log.d("bag", player.bag.get(i).getItemToString());
+                    //Log.d("bag", player.bag.get(i).getItemToString());
                 }
-                Log.d("bag", Integer.toString(player.bag.size()) + " / " + Integer.toString(Player.getMaxBagSize()));
+                //Log.d("bag", Integer.toString(player.bag.size()) + " / " + Integer.toString(Player.getMaxBagSize()));
             }
         });
 
@@ -421,7 +411,7 @@ public class MapsActivity extends FragmentActivity implements
                         else{
                             if(chosenItem.getType().equals(nacho.getType())){
                                 nacho.addAttack(chosenItem.getUpgradePoints());
-                                Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
+                                //Log.d("Upgrade", "Added one " + player.team.get(index).getApBonus());
                                 player.bag.remove(chosenItem);
                                 Util.showSnackBar(nacho.getName() + " is stronger!", findViewById(android.R.id.content));
                             }
@@ -472,7 +462,7 @@ public class MapsActivity extends FragmentActivity implements
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d("bag", "item: "+player.bag.get(i).toString()+ " bag size: " + player.bag.size() + " items size: " + player.bag.size());
+                //Log.d("bag", "item: "+player.bag.get(i).toString()+ " bag size: " + player.bag.size() + " items size: " + player.bag.size());
 
                 chosenItem = player.bag.get(i);
                 isCapturing = isDeathMatching = false;
@@ -494,16 +484,9 @@ public class MapsActivity extends FragmentActivity implements
         mGoogleApiClient.connect();
 
         //Save sensor listeners
-        if(depreciatedOrientation){
-
-            //Depreciated utilisation
-            mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        else{
-            //New way of using the Accelerometer and the Magnetometer
-            mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        //New way of using the Accelerometer and the Magnetometer
+        mSensorManager.registerListener(this, mMagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mAcceleroSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         //Check if GPS is activated by user
         LocationManager mlocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -549,7 +532,7 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onMapReady(GoogleMap map) {
 
-        Log.d("test", "OnMapReady");
+        //Log.d("test", "OnMapReady");
 
         //Map Configuration
         mMap = map;
@@ -597,7 +580,7 @@ public class MapsActivity extends FragmentActivity implements
                     imageInfo.setImageResource(getResources().getIdentifier(nachos.getName().toLowerCase(), "drawable", getPackageName()));
                     if (results[0] < minDist) { //400
                         buttonDeath.setEnabled(true);
-                        Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
+                        //Log.d("test", Integer.toString(player.team.size()) + " / " + Integer.toString(Player.getMaxTeamSize()));
                         if (player.team.size() < Player.getMaxTeamSize()) {
                             buttonCapture.setEnabled(true);
                         } else {
@@ -640,11 +623,11 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.d("test", "Connecté");
+        //Log.d("test", "Connecté");
 
         //Verify user's access permission to localisation
         if (PermissionHandler.checkLocationPermission(this)) {
-            Log.d("test", "Connecté - Permissions accordées");
+            //Log.d("test", "Connecté - Permissions accordées");
 
             //If permissions are accepted
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -657,20 +640,20 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d("test", "OnRequestPersmissionResult");
+        //Log.d("test", "OnRequestPersmissionResult");
 
         //Request code
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                Log.d("test", "OnRequestPersmissionResult - Request code localisation");
+                //Log.d("test", "OnRequestPersmissionResult - Request code localisation");
 
                 //Authorized permission
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("test", "OnRequestPersmissionResult - Accès autorisé");
+                    //Log.d("test", "OnRequestPersmissionResult - Accès autorisé");
                 }
                 //Unauthorized permission
                 else {
-                    Log.d("test", "OnRequestPersmissionResult - Accès refusé");
+                    //Log.d("test", "OnRequestPersmissionResult - Accès refusé");
                 }
                 return;
             }
@@ -711,7 +694,7 @@ public class MapsActivity extends FragmentActivity implements
         CameraPosition cam = new CameraPosition.Builder().target(latLng).bearing(currentBearing).zoom(18f).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam));
 
-        Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
+        //Log.d("gentimer", Long.toString(NachosGenerator.generationTimer - System.currentTimeMillis()));
 
         //TODO : Maybe change this part and put it in a timer callback?
         //Create new Nachos and Item
@@ -733,52 +716,42 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        //Compass calibrations (two ways)
-        if(depreciatedOrientation){
-            if(event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
 
-                //Update player's marker and camera
-                updateRotationPlayerMarker(event.values[0], 1);
-                updateRotationCamera(event.values[0], 10);
-            }
+        //Recuperation of data depending of sensor
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                System.arraycopy(event.values, 0, gravityData, 0, 3);
+                hasGravityData = true;
+                break;
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                System.arraycopy(event.values, 0, geomagneticData, 0, 3);
+                hasGeomagneticData = true;
+                break;
+            default:
+                return;
         }
-        else{
 
-            //Recuperation of data depending of sensor
-            switch (event.sensor.getType()){
-                case Sensor.TYPE_ACCELEROMETER:
-                    System.arraycopy(event.values, 0, gravityData, 0, 3);
-                    hasGravityData = true;
-                    break;
-                case Sensor.TYPE_MAGNETIC_FIELD:
-                    System.arraycopy(event.values, 0, geomagneticData, 0, 3);
-                    hasGeomagneticData = true;
-                    break;
-                default:
-                    return;
-            }
 
-            //If the accelerometer et magnetometer give both infos...
-            if (hasGravityData && hasGeomagneticData) {
-                float identityMatrix[] = new float[9];
-                float rotationMatrix[] = new float[9];
-                boolean success = SensorManager.getRotationMatrix(rotationMatrix, identityMatrix, gravityData, geomagneticData);
+        //If the accelerometer et magnetometer give both infos...
+        if (hasGravityData && hasGeomagneticData) {
+            float identityMatrix[] = new float[9];
+            float rotationMatrix[] = new float[9];
+            boolean success = SensorManager.getRotationMatrix(rotationMatrix, identityMatrix, gravityData, geomagneticData);
 
-                if (success) {
-                    float orientationMatrix[] = new float[3];
-                    SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, rotationMatrix);
+            if (success) {
+                float orientationMatrix[] = new float[3];
+                SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Y, rotationMatrix);
 
-                    //Recuperation of the azimuth which makes the compass work
-                    SensorManager.getOrientation(rotationMatrix, orientationMatrix);
-                    float rotationInRadians = orientationMatrix[0];
-                    rotationInDegrees = (float)(Math.toDegrees(rotationInRadians)+360)%360;
+                //Recuperation of the azimuth which makes the compass work
+                SensorManager.getOrientation(rotationMatrix, orientationMatrix);
+                float rotationInRadians = orientationMatrix[0];
+                rotationInDegrees = (float)(Math.toDegrees(rotationInRadians)+360)%360;
 
-                    Log.d("test", Double.toString(rotationInDegrees));
+                //Log.d("test", Double.toString(rotationInDegrees));
 
-                    //update player's marker and camera
-                    updateRotationPlayerMarker((float)rotationInDegrees, 30);
-                    updateRotationCamera((float)rotationInDegrees, 10);
-                }
+                //update player's marker and camera
+                updateRotationPlayerMarker((float)rotationInDegrees, 30);
+                updateRotationCamera((float)rotationInDegrees, 10);
             }
         }
     }
@@ -802,16 +775,16 @@ public class MapsActivity extends FragmentActivity implements
 
     @Override
     public void onConnectionSuspended(int cause) {
-        Log.d("test", "Connexion suspendue");
+        //Log.d("test", "Connexion suspendue");
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        Log.d("test", "Connexion échouée");
+        //Log.d("test", "Connexion échouée");
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) { Log.d("test", "onAccuracyChanged"); }
+    public void onAccuracyChanged(Sensor sensor, int i) { /*Log.d("test", "onAccuracyChanged");*/ }
 
     /**
      * Updates Google Map's angle camera
@@ -866,7 +839,7 @@ public class MapsActivity extends FragmentActivity implements
      * @param <T> object implementing markable
      */
     public <T extends Markable> void deleteTimedOutObjects(HashMap<Marker, T> mapMarker, long timeout) {
-        Log.d("Generic", "deleteTimedOutObjects");
+        //Log.d("Generic", "deleteTimedOutObjects");
         for (Iterator<Map.Entry<Marker, T>> iterator = mapMarker.entrySet().iterator(); iterator.hasNext(); )
         {
             Map.Entry<Marker, T> entry = iterator.next();
@@ -888,7 +861,7 @@ public class MapsActivity extends FragmentActivity implements
      * @return given object marker
      */
     private <T extends Markable > Marker placeMarker(T object) {
-        Log.d("Generic", "placeMarker");
+        //Log.d("Generic", "placeMarker");
         Marker marker = mMap.addMarker(new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(getResources().getIdentifier(object.getName().toLowerCase(), "drawable", getPackageName())))
                 .position(object.getPosition()));
